@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Create Coach Users
-        User::create([
+        $coachJohn = User::create([
             'name' => 'Coach John Smith',
             'fname' => 'John',
             'mname' => 'Michael',
@@ -52,7 +52,7 @@ class UserSeeder extends Seeder
             'years_active' => 20,
         ]);
 
-        User::create([
+        $coachMaria = User::create([
             'name' => 'Coach Maria Santos',
             'fname' => 'Maria',
             'mname' => 'Elena',
@@ -70,7 +70,7 @@ class UserSeeder extends Seeder
             'years_active' => 15,
         ]);
 
-        // Create Athlete Users
+        // Create Athlete Users assigned to coaches
         User::create([
             'name' => 'Juan dela Cruz',
             'fname' => 'Juan',
@@ -79,6 +79,7 @@ class UserSeeder extends Seeder
             'email' => 'juan.athlete@pathfit.com',
             'password' => Hash::make('password'),
             'role' => 'Athlete',
+            'coach_id' => $coachJohn->id,
             'gender' => 'male',
             'date_of_birth' => '2000-03-10',
             'age' => 24,
@@ -107,6 +108,7 @@ class UserSeeder extends Seeder
             'email' => 'ana.athlete@pathfit.com',
             'password' => Hash::make('password'),
             'role' => 'Athlete',
+            'coach_id' => $coachJohn->id,
             'gender' => 'female',
             'date_of_birth' => '1998-11-25',
             'age' => 26,
@@ -137,6 +139,7 @@ class UserSeeder extends Seeder
             'email' => 'miguel.athlete@pathfit.com',
             'password' => Hash::make('password'),
             'role' => 'Athlete',
+            'coach_id' => $coachJohn->id,
             'gender' => 'male',
             'date_of_birth' => '1995-07-12',
             'age' => 29,
@@ -166,6 +169,7 @@ class UserSeeder extends Seeder
             'email' => 'sofia.athlete@pathfit.com',
             'password' => Hash::make('password'),
             'role' => 'Athlete',
+            'coach_id' => $coachMaria->id,
             'gender' => 'female',
             'date_of_birth' => '2002-09-05',
             'age' => 22,
@@ -194,6 +198,7 @@ class UserSeeder extends Seeder
             'email' => 'carlos.athlete@pathfit.com',
             'password' => Hash::make('password'),
             'role' => 'Athlete',
+            'coach_id' => $coachMaria->id,
             'gender' => 'male',
             'date_of_birth' => '1997-12-18',
             'age' => 27,

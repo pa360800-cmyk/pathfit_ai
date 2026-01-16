@@ -53,12 +53,81 @@ class MessageController extends Controller
     }
 
     /**
+     * Display the messaging interface for athletes
+     */
+    public function athleteIndex()
+    {
+        $user = Auth::user();
+
+        // Get contacts based on user role
+        if ($user->role === 'Athlete') {
+            // Athletes can message their coach
+            $contacts = User::where('id', $user->coach_id)->get();
+        } else {
+            // Fallback for other roles
+            $contacts = collect();
+        }
+
+        // Get latest messages for each contact
+        $contactsWithMessages = $contacts->map(function ($contact) use ($user) {
+            $latestMessage = Message::where(function ($query) use ($user, $contact) {
+                $query->where('sender_id', $user->id)->where('receiver_id', $contact->id);
+            })->orWhere(function ($query) use ($user, $contact) {
+                $query->where('sender_id', $contact->id)->where('receiver_id', $user->id);
+            })->latest()->first();
+
+            $unreadCount = Message::where('sender_id', $contact->id)
+                ->where('receiver_id', $user->id)
+                ->where('is_read', false)
+                ->count();
+
+            return [
+                'contact' => $contact,
+                'latest_message' => $latestMessage,
+                'unread_count' => $unreadCount,
+            ];
+        });
+
+        return view('athlete.messages.index', compact('contactsWithMessages'));
+    }
+
+    /**
      * Display the messaging interface for coaches
      */
     public function coachIndex()
     {
-        // For coaches, use the same logic as index since it already handles coach role
-        return $this->index();
+        $user = Auth::user();
+
+        // Get contacts based on user role
+        if ($user->role === 'Coach') {
+            // Coaches can message their athletes
+            $contacts = User::where('coach_id', $user->id)->where('role', 'Athlete')->get();
+        } else {
+            // Fallback for other roles
+            $contacts = collect();
+        }
+
+        // Get latest messages for each contact
+        $contactsWithMessages = $contacts->map(function ($contact) use ($user) {
+            $latestMessage = Message::where(function ($query) use ($user, $contact) {
+                $query->where('sender_id', $user->id)->where('receiver_id', $contact->id);
+            })->orWhere(function ($query) use ($user, $contact) {
+                $query->where('sender_id', $contact->id)->where('receiver_id', $user->id);
+            })->latest()->first();
+
+            $unreadCount = Message::where('sender_id', $contact->id)
+                ->where('receiver_id', $user->id)
+                ->where('is_read', false)
+                ->count();
+
+            return [
+                'contact' => $contact,
+                'latest_message' => $latestMessage,
+                'unread_count' => $unreadCount,
+            ];
+        });
+
+        return view('coach.messages.index', compact('contactsWithMessages'));
     }
 
     /**
@@ -81,7 +150,15 @@ class MessageController extends Controller
             $query->where('sender_id', $contact->id)->where('receiver_id', $user->id);
         })->orderBy('created_at', 'asc')->get();
 
-        return view('messages.show', compact('contact', 'messages'));
+        // Return appropriate view based on user role
+        if ($user->role === 'Athlete') {
+            return view('athlete.messages.show', compact('contact', 'messages'));
+        } elseif ($user->role === 'Coach') {
+            return view('coach.messages.show', compact('contact', 'messages'));
+        } else {
+            // Fallback for admin/other roles
+            return view('messages.show', compact('contact', 'messages'));
+        }
     }
 
     /**
@@ -103,6 +180,48 @@ class MessageController extends Controller
         ]);
 
         return redirect()->route('messages.show', $contact)->with('success', 'Message sent successfully!');
+    }
+
+    /**
+     * Store a new message for coaches
+     */
+    public function coachStore(Request $request, User $contact)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        Message::create([
+            'sender_id' => $user->id,
+            'receiver_id' => $contact->id,
+            'content' => $request->content,
+            'is_read' => false,
+        ]);
+
+        return redirect()->route('coach.messages.show', $contact)->with('success', 'Message sent successfully!');
+    }
+
+    /**
+     * Store a new message for athletes
+     */
+    public function athleteStore(Request $request, User $contact)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        Message::create([
+            'sender_id' => $user->id,
+            'receiver_id' => $contact->id,
+            'content' => $request->content,
+            'is_read' => false,
+        ]);
+
+        return redirect()->route('athlete.messages.show', $contact)->with('success', 'Message sent successfully!');
     }
 
 

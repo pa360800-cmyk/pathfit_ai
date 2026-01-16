@@ -26,11 +26,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Athlete Details</h3>
-                            <div class="card-tools">
-                                <a href="{{ route('coach.athletes.edit', $athlete) }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                            </div>
+
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered">
@@ -67,7 +63,7 @@
                             </table>
                         </div>
                         <div class="card-footer">
-                            <a href="{{ route('coach.list') }}" class="btn btn-secondary">Back to List</a>
+                            <a href="{{ route('coach.athletes.index') }}" class="btn btn-secondary">Back to List</a>
                         </div>
                     </div>
                 </div>

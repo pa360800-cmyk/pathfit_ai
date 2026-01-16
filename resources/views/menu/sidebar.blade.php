@@ -5,12 +5,14 @@
     $usersActive = in_array($curr_route, ['admin.users.index', 'admin.users.create', 'admin.users.edit']) ? 'active' : '';
     $coachActive = in_array($curr_route, ['admin.coach.index']) ? 'active' : '';
     $playerStatusActive = in_array($curr_route, ['admin.player-status']) ? 'active' : '';
-    $trainingScheduleActive = in_array($curr_route, ['admin.training-schedule']) ? 'active' : '';
-    $profileActive = in_array($curr_route, ['admin.profile']) ? 'active' : '';
-    $sportActivityActive = in_array($curr_route, ['admin.sport_activity']) ? 'active' : '';
-    $sportAvailableActive = in_array($curr_route, ['admin.sport_available']) ? 'active' : '';
-    $assignCoachActive = in_array($curr_route, ['admin.assigncoach']) ? 'active' : '';
+    $trainingScheduleActive = in_array($curr_route, ['admin.training-schedule.index', 'admin.training-schedule.create', 'admin.training-schedule.edit']) ? 'active' : '';
+    $profileActive = in_array($curr_route, ['admin.profile.index', 'admin.profile.edits']) ? 'active' : '';
+    $sportActivityActive = in_array($curr_route, ['admin.sport-activity.index', 'admin.sport-activity.create', 'admin.sport-activity.edit']) ? 'active' : '';
+    $sportAvailableActive = in_array($curr_route, ['admin.sport-available.index', 'admin.sport-available.create', 'admin.sport-available.edit']) ? 'active' : '';
+    $assignCoachActive = in_array($curr_route, ['admin.assigncoach.index']) ? 'active' : '';
 @endphp
+
+
 
 <style>
     .nav-sidebar .nav-link {
@@ -111,13 +113,13 @@
             </a>
         </li>
          <li class="nav-item">
-            <a href="{{ route('admin.sport_activity.index') }}" class="nav-link {{ $sportActivityActive }}">
+            <a href="{{ route('admin.sport-activity.index') }}" class="nav-link {{ $sportActivityActive }}">
                 <i class="nav-icon fas fa-running"></i>
                 <p>Sport Activity</p>
             </a>
         </li>
        <li class="nav-item">
-            <a href="{{ route('admin.sport_available.index') }}" class="nav-link {{ $sportAvailableActive }}">
+            <a href="{{ route('admin.sport-available.index') }}" class="nav-link {{ $sportAvailableActive }}">
                 <i class="nav-icon fas fa-list"></i>
                 <p>Sport Available</p>
             </a>

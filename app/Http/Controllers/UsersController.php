@@ -42,10 +42,36 @@ class UsersController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
+    public function show(User $user)
+    {
+        return view('admin.users.show', compact('user'));
+    }
+
     public function adminDashboard()
     {
         $users = User::all();
-        return view('admin.dashboard', compact('users'));
+        $totalUsers = User::count();
+        $totalCoaches = User::where('role', 'Coach')->count();
+        $totalAthletes = User::where('role', 'Athlete')->count();
+        $totalAdministrators = User::where('role', 'Administrator')->count();
+        $totalSports = \App\Models\SportAvailable::count();
+        $totalActivities = \App\Models\SportActivity::count();
+        $recentUsers = User::latest()->take(10)->get();
+        $recentCoaches = User::where('role', 'Coach')->latest()->take(5)->get();
+        $recentAthletes = User::where('role', 'Athlete')->latest()->take(5)->get();
+
+        return view('admin.dashboard', compact(
+            'users',
+            'totalUsers',
+            'totalCoaches',
+            'totalAthletes',
+            'totalAdministrators',
+            'totalSports',
+            'totalActivities',
+            'recentUsers',
+            'recentCoaches',
+            'recentAthletes'
+        ));
     }
 
     public function userRead()

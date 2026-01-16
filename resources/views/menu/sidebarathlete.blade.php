@@ -1,4 +1,5 @@
 @php
+    use App\Models\Message;
     $curr_route = request()->route()->getName();
     $user = Auth::user();
     $dashboardActive = in_array($curr_route, ['athlete.dashboard']) ? 'active' : '';
@@ -6,9 +7,13 @@
     $assignedCoachActive = in_array($curr_route, ['user.assigned-coach']) ? 'active' : '';
     $reportActivityActive = in_array($curr_route, ['user.report-activity']) ? 'active' : '';
     $sportSuggestionActive = in_array($curr_route, ['athlete.sport-suggestion']) ? 'active' : '';
+    $sessionSchedulesActive = in_array($curr_route, ['athlete.session-schedules.index']) ? 'active' : '';
     $messengerActive = in_array($curr_route, ['user.messenger']) ? 'active' : '';
     $profileActive = in_array($curr_route, ['athlete.profile.index']) ? 'active' : '';
+    $unreadMessagesCount = Message::where('receiver_id', $user->id)->where('is_read', false)->count();
 @endphp
+
+
 
 <style>
     .nav-sidebar .nav-link {
@@ -80,6 +85,14 @@
             </a>
         </li>
 
+        <!-- Session Schedules -->
+        <li class="nav-item">
+            <a href="{{ route('athlete.session-schedules.index') }}" class="nav-link {{ $sessionSchedulesActive }}">
+                <i class="nav-icon fas fa-clock"></i>
+                <p>Session Schedules</p>
+            </a>
+        </li>
+
         <!-- Assigned Coach -->
         <li class="nav-item">
             <a href="{{ route('user.assigned-coach') }}" class="nav-link {{ $assignedCoachActive }}">
@@ -108,11 +121,13 @@
 
         <!-- Messenger -->
         <li class="nav-item">
-            <a href="{{ route('user.messenger') }}" class="nav-link {{ $messengerActive }}">
+            <a href="{{ route('athlete.messages.index') }}" class="nav-link {{ $messengerActive }}">
                 <i class="nav-icon fas fa-comments"></i>
                 <p>
                     Messenger
-                    <span class="badge badge-info right" id="unread-messages-count">0</span>
+                    @if($unreadMessagesCount > 0)
+                        <span class="badge badge-info right" id="unread-messages-count">{{ $unreadMessagesCount }}</span>
+                    @endif
                 </p>
             </a>
         </li>

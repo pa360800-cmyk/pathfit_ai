@@ -32,7 +32,7 @@ class SportAvailableController extends Controller
 
         SportAvailable::create($request->all());
 
-        return redirect()->route('admin.sport_available.index')->with('success', 'Sport available created successfully');
+        return redirect()->route('admin.sport-available.index')->with('success', 'Sport available created successfully');
     }
 
     public function edit($id)
@@ -55,7 +55,7 @@ class SportAvailableController extends Controller
         $sportAvailable = SportAvailable::findOrFail($id);
         $sportAvailable->update($request->all());
 
-        return redirect()->route('admin.sport_available.index')->with('success', 'Sport available updated successfully');
+        return redirect()->route('admin.sport-available.index')->with('success', 'Sport available updated successfully');
     }
 
     public function destroy($id)

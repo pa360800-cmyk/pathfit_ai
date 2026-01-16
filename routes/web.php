@@ -8,15 +8,15 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TrainingScheduleController;
+use App\Http\Controllers\SessionScheduleController;
 use App\Http\Controllers\SportActivityController;
 use App\Http\Controllers\SportAvailableController;
 use App\Http\Controllers\AiBasedController;
 use App\Http\Controllers\SportRequirementController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\WelcomeController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [WelcomeController::class, 'index']);
 
 // Authentication routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -41,7 +41,7 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
     Route::post('/report-activity', [UserController::class, 'storeReportActivity'])->name('user.report-activity.store');
     Route::get('/messenger', [UserController::class, 'messenger'])->name('user.messenger');
 
-    // Message routes
+    // Message routes (legacy - redirects based on role)
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/{contact}', [MessageController::class, 'show'])->name('messages.show');
     Route::post('/messages/{contact}', [MessageController::class, 'store'])->name('messages.store');
@@ -53,6 +53,7 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
         Route::get('/users', [UsersController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UsersController::class, 'create'])->name('users.create');
         Route::post('/users', [UsersController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}', [UsersController::class, 'show'])->name('users.show');
         Route::get('/users/{user}/edit', [UsersController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [UsersController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
@@ -74,18 +75,18 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
         Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edits');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-        Route::get('/sport-activity', [SportActivityController::class, 'index'])->name('sport_activity.index');
-        Route::get('/sport-activity/create', [SportActivityController::class, 'create'])->name('sport_activity.create');
-        Route::post('/sport-activity', [SportActivityController::class, 'store'])->name('sport_activity.store');
-        Route::get('/sport-activity/{sportActivity}/edit', [SportActivityController::class, 'edit'])->name('sport_activity.edit');
-        Route::put('/sport-activity/{sportActivity}', [SportActivityController::class, 'update'])->name('sport_activity.update');
-        Route::delete('/sport-activity/{sportActivity}', [SportActivityController::class, 'destroy'])->name('sport_activity.destroy');
-        Route::get('/sport-available', [SportAvailableController::class, 'index'])->name('sport_available.index');
-        Route::get('/sport-available/create', [SportAvailableController::class, 'create'])->name('sport_available.create');
-        Route::post('/sport-available', [SportAvailableController::class, 'store'])->name('sport_available.store');
-        Route::get('/sport-available/{sportAvailable}/edit', [SportAvailableController::class, 'edit'])->name('sport_available.edit');
-        Route::put('/sport-available/{sportAvailable}', [SportAvailableController::class, 'update'])->name('sport_available.update');
-        Route::delete('/sport-available/{sportAvailable}', [SportAvailableController::class, 'destroy'])->name('sport_available.destroy');
+        Route::get('/sport-activity', [SportActivityController::class, 'index'])->name('sport-activity.index');
+        Route::get('/sport-activity/create', [SportActivityController::class, 'create'])->name('sport-activity.create');
+        Route::post('/sport-activity', [SportActivityController::class, 'store'])->name('sport-activity.store');
+        Route::get('/sport-activity/{sportActivity}/edit', [SportActivityController::class, 'edit'])->name('sport-activity.edit');
+        Route::put('/sport-activity/{sportActivity}', [SportActivityController::class, 'update'])->name('sport-activity.update');
+        Route::delete('/sport-activity/{sportActivity}', [SportActivityController::class, 'destroy'])->name('sport-activity.destroy');
+        Route::get('/sport-available', [SportAvailableController::class, 'index'])->name('sport-available.index');
+        Route::get('/sport-available/create', [SportAvailableController::class, 'create'])->name('sport-available.create');
+        Route::post('/sport-available', [SportAvailableController::class, 'store'])->name('sport-available.store');
+        Route::get('/sport-available/{sportAvailable}/edit', [SportAvailableController::class, 'edit'])->name('sport-available.edit');
+        Route::put('/sport-available/{sportAvailable}', [SportAvailableController::class, 'update'])->name('sport-available.update');
+        Route::delete('/sport-available/{sportAvailable}', [SportAvailableController::class, 'destroy'])->name('sport-available.destroy');
         Route::get('/ai-based', [AiBasedController::class, 'index'])->name('ai-based.index');
         Route::post('/ai-based/run-assignment', [AiBasedController::class, 'runAiAssignment'])->name('ai-based.run-assignment');
         Route::post('/ai-based/enable-assistance', [AiBasedController::class, 'enableAiAssistance'])->name('ai-based.enable-assistance');
@@ -99,6 +100,14 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         Route::get('/sport-suggestion', [UserController::class, 'sportSuggestion'])->name('sport-suggestion');
+
+        // Athlete Message routes
+        Route::get('/messages', [MessageController::class, 'athleteIndex'])->name('messages.index');
+        Route::get('/messages/{contact}', [MessageController::class, 'show'])->name('messages.show');
+        Route::post('/messages/{contact}', [MessageController::class, 'athleteStore'])->name('messages.store');
+
+        // Athlete Session Schedule routes
+        Route::get('/session-schedules', [SessionScheduleController::class, 'athleteIndex'])->name('session-schedules.index');
     });
 
     // Coach routes
@@ -121,11 +130,30 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
         Route::get('/activity-reports', [UserController::class, 'coachActivityReports'])->name('activity-reports.index');
         Route::get('/activity-reports/create', [UserController::class, 'coachCreateActivityReport'])->name('activity-reports.create');
         Route::post('/activity-reports', [UserController::class, 'coachStoreActivityReport'])->name('activity-reports.store');
+
+        // Coach Message routes
         Route::get('/messages', [MessageController::class, 'coachIndex'])->name('messages.index');
+        Route::get('/messages/{contact}', [MessageController::class, 'show'])->name('messages.show');
+        Route::post('/messages/{contact}', [MessageController::class, 'coachStore'])->name('messages.store');
+
+        // Profile routes
+        Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+        Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         // Sport Requirements routes
         Route::resource('sport-requirements', SportRequirementController::class);
         Route::patch('sport-requirements/{sportRequirement}/toggle', [SportRequirementController::class, 'toggle'])->name('sport-requirements.toggle');
+
+        // Coach Session Schedule routes
+        Route::get('/session-schedules', [SessionScheduleController::class, 'coachIndex'])->name('session-schedules.index');
+        Route::get('/session-schedules/create', [SessionScheduleController::class, 'coachCreate'])->name('session-schedules.create');
+        Route::post('/session-schedules', [SessionScheduleController::class, 'coachStore'])->name('session-schedules.store');
+        Route::get('/session-schedules/{sessionSchedule}', [SessionScheduleController::class, 'coachShow'])->name('session-schedules.show');
+        Route::get('/session-schedules/{sessionSchedule}/edit', [SessionScheduleController::class, 'coachEdit'])->name('session-schedules.edit');
+        Route::put('/session-schedules/{sessionSchedule}', [SessionScheduleController::class, 'coachUpdate'])->name('session-schedules.update');
+        Route::delete('/session-schedules/{sessionSchedule}', [SessionScheduleController::class, 'coachDestroy'])->name('session-schedules.destroy');
     });
 });
 

@@ -1,14 +1,18 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create Sport Requirement') }}
-        </h2>
-    </x-slot>
+@extends('layouts.mastercoach')
 
-    <div class="py-12">
+@section('content')
+<div class="content-wrapper">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="p-6 lg:p-8 bg-white border-b border-gray-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">Create Sport Requirement</h3>
+                        <a href="{{ route('coach.sport-requirements.index') }}"
+                           class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            Back to List
+                        </a>
+                    </div>
+
                     <form method="POST" action="{{ route('coach.sport-requirements.store') }}">
                         @csrf
 
@@ -160,4 +164,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

@@ -144,7 +144,111 @@ class UserController extends Controller
     public function athleteDashboard()
     {
         $user = Auth::user();
-        return view('athlete.dashboard', compact('user'));
+
+        // Statistics
+        $trainingSessions = ActivityReport::where('user_id', $user->id)->count();
+        $personalBests = count($user->personal_bests ?? []);
+        $performanceScore = ActivityReport::where('user_id', $user->id)->avg('performance_rating') ?? 0;
+        $performanceScore = round($performanceScore, 1); // Round to 1 decimal
+
+        // New Statistics
+        $totalTrainingHours = ActivityReport::where('user_id', $user->id)->sum('duration') / 60;
+        $totalTrainingHours = round($totalTrainingHours, 1);
+        $avgSessionDuration = ActivityReport::where('user_id', $user->id)->avg('duration') ?? 0;
+        $avgSessionDuration = round($avgSessionDuration, 1);
+        $currentStreak = $this->calculateCurrentStreak($user->id);
+        $weeklyGoal = $user->weekly_training_hours ?? 10; // Default 10 hours
+        $weeklyProgress = $this->getWeeklyProgress($user->id);
+
+        // Coach Information
+        $coach = $user->coach;
+
+        // Recent Activities
+        $recentActivities = ActivityReport::where('user_id', $user->id)
+            ->orderBy('activity_date', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Upcoming Sessions
+        $upcomingSessions = TrainingSchedule::where('user_id', $user->id)
+            ->where('date', '>=', now()->toDateString())
+            ->orderBy('date')
+            ->limit(3)
+            ->get();
+
+        // Injury Status
+        $currentInjuries = $user->current_injuries ?? [];
+        $injuryAlerts = count($currentInjuries);
+
+        // Achievement Showcase
+        $recentAchievements = $this->getRecentAchievements($user);
+
+        // Chart Data
+        // Training Progress: Weekly training hours (sum duration / 60 for hours)
+        $trainingProgress = [];
+        $weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'];
+        for ($i = 0; $i < 6; $i++) {
+            $startDate = now()->startOfWeek()->subWeeks(5 - $i);
+            $endDate = $startDate->copy()->endOfWeek();
+            $hours = ActivityReport::where('user_id', $user->id)
+                ->whereBetween('activity_date', [$startDate, $endDate])
+                ->sum('duration') / 60; // Convert minutes to hours
+            $trainingProgress[] = round($hours, 1);
+        }
+
+        // Goal Achievement: Based on performance rating
+        $totalActivities = ActivityReport::where('user_id', $user->id)->count();
+        $completed = ActivityReport::where('user_id', $user->id)->where('performance_rating', '>=', 8)->count();
+        $inProgress = ActivityReport::where('user_id', $user->id)->whereBetween('performance_rating', [5, 7])->count();
+        $notStarted = $totalActivities - $completed - $inProgress;
+        $goalAchievement = [$completed, $inProgress, max(0, $notStarted)];
+
+        // Performance Trend: Monthly performance scores
+        $performanceTrend = [];
+        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        for ($i = 0; $i < 6; $i++) {
+            $month = now()->subMonths(5 - $i)->month;
+            $year = now()->subMonths(5 - $i)->year;
+            $avg = ActivityReport::where('user_id', $user->id)
+                ->whereYear('activity_date', $year)
+                ->whereMonth('activity_date', $month)
+                ->avg('performance_rating') ?? 0;
+            $performanceTrend[] = round($avg, 1);
+        }
+
+        // New Charts Data
+        // Skills Radar Chart
+        $skillsData = $this->getSkillsData($user);
+
+        // Time Distribution (by activity type)
+        $timeDistribution = $this->getTimeDistribution($user->id);
+
+        // Comparison Chart (vs average athlete)
+        $comparisonData = $this->getComparisonData($user->id);
+
+        return view('athlete.dashboard', compact(
+            'user',
+            'trainingSessions',
+            'personalBests',
+            'performanceScore',
+            'totalTrainingHours',
+            'avgSessionDuration',
+            'currentStreak',
+            'weeklyGoal',
+            'weeklyProgress',
+            'coach',
+            'recentActivities',
+            'upcomingSessions',
+            'injuryAlerts',
+            'currentInjuries',
+            'recentAchievements',
+            'trainingProgress',
+            'goalAchievement',
+            'performanceTrend',
+            'skillsData',
+            'timeDistribution',
+            'comparisonData'
+        ));
     }
 
     public function athleteProfile()
@@ -706,6 +810,185 @@ class UserController extends Controller
         }
 
         return ['score' => $score, 'reasons' => $reasons];
+    }
+
+    private function calculateCurrentStreak($userId)
+    {
+        // Calculate consecutive days with activity reports
+        $activities = ActivityReport::where('user_id', $userId)
+            ->orderBy('activity_date', 'desc')
+            ->pluck('activity_date')
+            ->map(function ($date) {
+                return $date->toDateString();
+            })
+            ->unique()
+            ->sort()
+            ->values();
+
+        if ($activities->isEmpty()) {
+            return 0;
+        }
+
+        $streak = 0;
+        $currentDate = now()->toDateString();
+
+        // Check if today has activity
+        if (!$activities->contains($currentDate)) {
+            // If no activity today, check yesterday
+            $currentDate = now()->subDay()->toDateString();
+            if (!$activities->contains($currentDate)) {
+                return 0;
+            }
+        }
+
+        // Count consecutive days backwards from current date
+        while ($activities->contains($currentDate)) {
+            $streak++;
+            $currentDate = \Carbon\Carbon::parse($currentDate)->subDay()->toDateString();
+        }
+
+        return $streak;
+    }
+
+    private function getWeeklyProgress($userId)
+    {
+        $startOfWeek = now()->startOfWeek();
+        $endOfWeek = now()->endOfWeek();
+
+        $weeklyHours = ActivityReport::where('user_id', $userId)
+            ->whereBetween('activity_date', [$startOfWeek, $endOfWeek])
+            ->sum('duration') / 60;
+
+        return round($weeklyHours, 1);
+    }
+
+    private function getSkillsData(User $user)
+    {
+        // Mock skills data based on user profile and activity
+        $skills = [
+            'speed' => 7,
+            'endurance' => 6,
+            'strength' => 8,
+            'agility' => 7,
+            'technique' => 6,
+            'mental' => 7
+        ];
+
+        // Adjust based on activity reports
+        $avgPerformance = ActivityReport::where('user_id', $user->id)->avg('performance_rating') ?? 5;
+        $activityCount = ActivityReport::where('user_id', $user->id)->count();
+
+        // Boost skills based on performance and experience
+        $boost = min($avgPerformance / 10, 0.5) + min($activityCount / 50, 0.5);
+
+        foreach ($skills as $skill => $value) {
+            $skills[$skill] = min(10, round($value + $boost, 1));
+        }
+
+        return array_values($skills);
+    }
+
+    private function getTimeDistribution($userId)
+    {
+        $activities = ActivityReport::where('user_id', $userId)->get();
+
+        $distribution = [
+            'training' => 0,
+            'rest' => 0,
+            'warm-up' => 0,
+            'cool-down' => 0,
+            'other' => 0
+        ];
+
+        foreach ($activities as $activity) {
+            $type = strtolower($activity->activity_type);
+            if (isset($distribution[$type])) {
+                $distribution[$type] += $activity->duration;
+            } else {
+                $distribution['other'] += $activity->duration;
+            }
+        }
+
+        // Convert to percentages
+        $total = array_sum($distribution);
+        if ($total > 0) {
+            foreach ($distribution as $key => $value) {
+                $distribution[$key] = round(($value / $total) * 100);
+            }
+        }
+
+        return array_values($distribution);
+    }
+
+    private function getComparisonData($userId)
+    {
+        $userAvg = ActivityReport::where('user_id', $userId)->avg('performance_rating') ?? 0;
+        $userThisMonth = ActivityReport::where('user_id', $userId)
+            ->whereYear('activity_date', now()->year)
+            ->whereMonth('activity_date', now()->month)
+            ->avg('performance_rating') ?? 0;
+        $userLastMonth = ActivityReport::where('user_id', $userId)
+            ->whereYear('activity_date', now()->subMonth()->year)
+            ->whereMonth('activity_date', now()->subMonth()->month)
+            ->avg('performance_rating') ?? 0;
+
+        // Mock team average (in real app, calculate from all athletes)
+        $teamAverage = 6.5;
+
+        return [
+            'yourData' => [round($userThisMonth, 1), round($userLastMonth, 1), round($userAvg, 1)],
+            'teamAverage' => [$teamAverage, $teamAverage, $teamAverage]
+        ];
+    }
+
+    private function getRecentAchievements(User $user)
+    {
+        $achievements = [];
+
+        // Check for various achievements based on user data
+        $activityCount = ActivityReport::where('user_id', $user->id)->count();
+        $avgPerformance = ActivityReport::where('user_id', $user->id)->avg('performance_rating') ?? 0;
+        $personalBests = count($user->personal_bests ?? []);
+        $streak = $this->calculateCurrentStreak($user->id);
+
+        if ($activityCount >= 10) {
+            $achievements[] = [
+                'icon' => '🏃‍♂️',
+                'title' => 'Dedicated Athlete',
+                'description' => 'Completed 10+ training sessions',
+                'date' => now()->format('M d, Y')
+            ];
+        }
+
+        if ($avgPerformance >= 8) {
+            $achievements[] = [
+                'icon' => '⭐',
+                'title' => 'High Performer',
+                'description' => 'Maintained excellent performance ratings',
+                'date' => now()->format('M d, Y')
+            ];
+        }
+
+        if ($personalBests > 0) {
+            $achievements[] = [
+                'icon' => '🏆',
+                'title' => 'Personal Best',
+                'description' => 'Set new personal records',
+                'date' => now()->format('M d, Y')
+            ];
+        }
+
+        if ($streak >= 7) {
+            $achievements[] = [
+                'icon' => '🔥',
+                'title' => 'Consistency King',
+                'description' => 'Maintained a ' . $streak . '-day training streak',
+                'date' => now()->format('M d, Y')
+            ];
+        }
+
+        // Return up to 3 recent achievements
+        return array_slice($achievements, 0, 3);
     }
 
     private function generateAISportSuggestions(User $user, $sports)

@@ -517,15 +517,19 @@
             </a>
 
             <div class="sidebar">
+                @php
+                    $user = Auth::user();
+                @endphp
                 <center>
-                    <div class="user-panel pb-3 mb-2">
-                        <div class="img"  >
-          
-<img src="{{ asset('templates/dist/img/grad.avif') }}" style="width: 150px;height :100px;">
+                    <div class="user-panel">
+                        <div class="">
+                            @if($user->photo)
+                                <img src="{{ asset('storage/' . $user->photo) }}" class="" alt="User Image" style="width: 100px; height: 100px; object-fit: cover; " onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNjY2MiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSIxNSIgZmlsbD0iIzY2NiIvPgogIDxwYXRoIGQ9Ik0yMCA4MCBRMjAgNjAgNTAgNjAgUTgwIDYwIDgwIDgwIiBmaWxsPSIjNjY2Ii8+Cjwvc3ZnPg=='">
+                            @else
+                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNjY2MiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSIxNSIgZmlsbD0iIzY2NiIvPgogIDxwYXRoIGQ9Ik0yMCA4MCBRMjAgNjAgNTAgNjAgUTgwIDYwIDgwIDgwIiBmaWxsPSIjNjY2Ii8+Cjwvc3ZnPg==" class="" alt="Temporary User Image" style="width: 100px; height: 100px; object-fit: cover;">
+                            @endif
                         </div>
-
                     </div>
-
                 </center>
 
                 <div class="form-inline sidebar-search">

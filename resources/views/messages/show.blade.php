@@ -1,4 +1,4 @@
-@extends('layouts.masterathlete')
+@extends(Auth::user()->role === 'Coach' ? 'layouts.mastercoach' : 'layouts.masterathlete')
 
 @section('title', 'Conversation with ' . $contact->name)
 

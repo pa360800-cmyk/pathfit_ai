@@ -1,13 +1,18 @@
 @php
+    use App\Models\Message;
     $curr_route = request()->route()->getName();
     $user = Auth::user();
     $dashboardActive = in_array($curr_route, ['coach.dashboard']) ? 'active' : '';
     $athletesActive = in_array($curr_route, ['coach.list', 'coach.athletes.index', 'coach.athletes.show', 'coach.athletes.edit']) ? 'active' : '';
     $trainingSchedulesActive = in_array($curr_route, ['coach.training-schedules.index', 'coach.training-schedules.create', 'coach.training-schedules.show', 'coach.training-schedules.edit']) ? 'active' : '';
+    $sessionSchedulesActive = in_array($curr_route, ['coach.session-schedules.index', 'coach.session-schedules.create', 'coach.session-schedules.show', 'coach.session-schedules.edit']) ? 'active' : '';
     $activityReportsActive = in_array($curr_route, ['coach.activity-reports.index']) ? 'active' : '';
     $sportRequirementsActive = in_array($curr_route, ['coach.sport-requirements.index', 'coach.sport-requirements.create', 'coach.sport-requirements.show', 'coach.sport-requirements.edit']) ? 'active' : '';
     $messagesActive = in_array($curr_route, ['coach.messages.index', 'user.messenger']) ? 'active' : '';
+    $unreadMessagesCount = Message::where('receiver_id', $user->id)->where('is_read', false)->count();
 @endphp
+
+
 
 <style>
     .nav-sidebar .nav-link {
@@ -105,6 +110,13 @@
         </li>
 
         <li class="nav-item">
+            <a href="{{ route('coach.session-schedules.index') }}" class="nav-link {{ $sessionSchedulesActive }}">
+                <i class="nav-icon fas fa-clock"></i>
+                <p>Session Schedules</p>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a href="{{ route('coach.activity-reports.index') }}" class="nav-link {{ $activityReportsActive }}">
                 <i class="nav-icon fas fa-chart-line"></i>
                 <p>Activity Reports</p>
@@ -123,14 +135,16 @@
                 <i class="nav-icon fa-solid fa-comments"></i>
                 <p>
                     Messages
-                    <span class="badge bg-primary float-right" id="unread-messages-count">0</span>
+                    @if($unreadMessagesCount > 0)
+                        <span class="badge bg-primary float-right" id="unread-messages-count">{{ $unreadMessagesCount }}</span>
+                    @endif
                 </p>
             </a>
         </li>
 
 <li class="nav-header" style="color: rgb(0, 0, 0)">Account</li>
         <li class="nav-item">
-            <a href="{{ route('profile.edit') }}" class="nav-link {{ in_array($curr_route, ['profile.edit']) ? 'active' : '' }}">
+            <a href="{{ route('coach.profile.index') }}" class="nav-link {{ in_array($curr_route, ['coach.profile.index']) ? 'active' : '' }}">
                 <i class="nav-icon fa-solid fa-user"></i>
                 <p>Profile</p>
             </a>

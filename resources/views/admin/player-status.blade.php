@@ -8,8 +8,8 @@
         <h3 class="card-title">Player Status</h3>
     </div>
     <div class="card-body">
-        <div class="mb-3">
-            <a href="#" class="btn btn-primary">Add New Player</a>
+        <div class="mb-12">
+            <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Add New Player</a>
         </div>
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
@@ -24,31 +24,40 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($users as $user)
                     <tr>
-                        <td>1</td>
-                        <td>John Doe</td>
-                        <td>Forward</td>
-                        <td><span class="badge badge-success">Active</span></td>
-                        <td>85%</td>
+                        <td>{{ $user->id }}</td>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->position_role ?? 'N/A' }}</td>
                         <td>
-                            <a href="#" class="btn btn-sm btn-info">View</a>
-                            <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                            @if(count($user->current_injuries ?? []) > 0)
+                                <span class="badge badge-warning">Injured</span>
+                            @else
+                                <span class="badge badge-success">Active</span>
+                            @endif
+                        </td>
+                        <td>
+                            @php
+                                $performance = match(strtolower($user->level ?? '')) {
+                                    'beginner' => '60%',
+                                    'intermediate' => '75%',
+                                    'advanced' => '90%',
+                                    default => '70%'
+                                };
+                            @endphp
+                            {{ $performance }}
+                        </td>
+                        <td>
+                            <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-info">View</a>
+                            <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
                         </td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Jane Smith</td>
-                        <td>Midfielder</td>
-                        <td><span class="badge badge-warning">Injured</span></td>
-                        <td>70%</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-info">View</a>
-                            <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="#" class="btn btn-sm btn-danger">Delete</a>
-                        </td>
-                    </tr>
-                    <!-- Add more rows as needed -->
+                    @endforeach
                 </tbody>
             </table>
         </div>

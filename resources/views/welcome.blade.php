@@ -23,11 +23,17 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: var(--dark);
             overflow-x: hidden;
             line-height: 1.6;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
         }
 
         /* Navigation */
@@ -591,6 +597,14 @@
             margin: 0 auto 1.5rem;
         }
 
+        .coach-avatar-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1.5rem;
+        }
+
         .coach-card h3 {
             font-size: 1.25rem;
             font-weight: 700;
@@ -1060,6 +1074,20 @@
             <p>Learn from certified professionals who specialize in different areas of fitness and wellness.</p>
         </div>
         <div class="coaches-grid">
+            @forelse($coaches as $coach)
+            <div class="coach-card">
+                @if($coach->photo)
+                    <img src="{{ asset('storage/' . $coach->photo) }}" alt="{{ $coach->fname }} {{ $coach->lname }}" class="coach-avatar-image">
+                @else
+                    <div class="coach-avatar">
+                        {{ substr($coach->fname, 0, 1) }}{{ substr($coach->lname, 0, 1) }}
+                    </div>
+                @endif
+                <h3>{{ $coach->fname }} {{ $coach->lname }}</h3>
+                <div class="coach-specialty">{{ $coach->specialization ?? 'General Coaching' }}</div>
+                <p>{{ $coach->experience ?? 'Experienced coach dedicated to helping athletes achieve their goals.' }}</p>
+            </div>
+            @empty
             <div class="coach-card">
                 <div class="coach-avatar">AS</div>
                 <h3>Alexandra Smith</h3>
@@ -1084,6 +1112,7 @@
                 <div class="coach-specialty">Nutrition & Recovery</div>
                 <p>Sports nutritionist helping athletes optimize diet and recovery for peak performance.</p>
             </div>
+            @endforelse
         </div>
     </section>
 
