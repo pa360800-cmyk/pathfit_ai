@@ -8,7 +8,7 @@
         <h3 class="card-title">Player Status</h3>
     </div>
     <div class="card-body">
-        <div class="mb-12">
+        <div class="mb-3">
             <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Add New Player</a>
         </div>
         <div class="table-responsive">
@@ -60,7 +60,6 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
     </div>
 </div>
 </div>

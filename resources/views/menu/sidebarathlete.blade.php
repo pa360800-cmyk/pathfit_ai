@@ -79,7 +79,7 @@
 
         <!-- Training Schedule -->
         <li class="nav-item">
-            <a href="{{ route('user.training-schedule') }}" class="nav-link {{ $trainingScheduleActive }}">
+            <a href="{{ route('athlete.training-schedule.index') }}" class="nav-link {{ $trainingScheduleActive }}">
                 <i class="nav-icon fas fa-calendar-alt"></i>
                 <p>Training Schedule</p>
             </a>

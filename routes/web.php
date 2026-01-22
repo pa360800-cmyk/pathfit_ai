@@ -108,6 +108,9 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
 
         // Athlete Session Schedule routes
         Route::get('/session-schedules', [SessionScheduleController::class, 'athleteIndex'])->name('session-schedules.index');
+
+        // Athlete Training Schedule routes
+        Route::get('/training-schedule', [UserController::class, 'userTrainingSchedule'])->name('training-schedule.index');
     });
 
     // Coach routes

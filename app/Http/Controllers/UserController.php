@@ -17,7 +17,7 @@ class UserController extends Controller
     public function userTrainingSchedule()
     {
         $user = Auth::user();
-        $trainingSchedules = TrainingSchedule::where('user_id', $user->id)->get();
+        $trainingSchedules = TrainingSchedule::where('user_id', $user->id)->with('coach')->get();
         return view('user.training-schedule', compact('trainingSchedules'));
     }
 
@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $coach = User::where('id', $user->coach_id)->first();
-        $trainingSchedules = TrainingSchedule::where('user_id', $user->id)->get();
+        $trainingSchedules = TrainingSchedule::where('user_id', $user->id)->with('coach')->get();
         return view('user.assigned-coach', compact('coach', 'trainingSchedules'));
     }
 
