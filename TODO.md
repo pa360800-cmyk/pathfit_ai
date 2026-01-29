@@ -1,17 +1,12 @@
-## Steps to Complete:
+# TODO: Add AI for Generating Athlete-Compatible Training
 
--   [x] Add `athleteIndex` method to SessionScheduleController to fetch session schedules for the authenticated athlete
--   [x] Add the route `athlete.session-schedules.index` in routes/web.php under the athlete prefix
--   [x] Create a view file `resources/views/athlete/session-schedules/index.blade.php` for athletes to display their session schedules
+## Tasks
 
-# All tasks completed successfully. The route [athlete.session-schedules.index] should now be defined and functional.
+- [ ] Add `generateAiTraining` method to `AiBasedController.php`
+- [ ] Update `resources/views/admin/ai-based/index.blade.php` to include "Generate AI Training" button and display results
+- [ ] Test the AI training generation functionality
 
-# TODO: Fix Route [athlete.session-schedules.index] not defined
+## Completed
 
-## Steps to Complete:
-
--   [x] Add `athleteIndex` method to SessionScheduleController to fetch session schedules for the authenticated athlete
--   [x] Add the route `athlete.session-schedules.index` in routes/web.php under the athlete prefix
--   [x] Create a view file `resources/views/athlete/session-schedules/index.blade.php` for athletes to display their session schedules
-
-All tasks completed successfully. The route [athlete.session-schedules.index] should now be defined and functional.
+- [x] Analyze existing codebase and plan implementation
+- [x] Get user approval for plan
