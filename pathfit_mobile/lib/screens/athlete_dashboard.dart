@@ -36,9 +36,11 @@ class _AthleteDashboardState extends State<AthleteDashboard> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Failed to load data')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to load data')));
+      }
     }
   }
 
@@ -56,10 +58,12 @@ class _AthleteDashboardState extends State<AthleteDashboard> {
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await authProvider.logout();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-              );
+              if (context.mounted) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                );
+              }
             },
           ),
         ],

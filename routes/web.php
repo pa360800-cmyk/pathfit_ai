@@ -82,6 +82,7 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
         Route::put('/sport-activity/{sportActivity}', [SportActivityController::class, 'update'])->name('sport-activity.update');
         Route::delete('/sport-activity/{sportActivity}', [SportActivityController::class, 'destroy'])->name('sport-activity.destroy');
         Route::get('/sport-available', [SportAvailableController::class, 'index'])->name('sport-available.index');
+        Route::get('/sport-available/{sportAvailable}', [SportAvailableController::class, 'show'])->name('sport-available.show');
         Route::get('/sport-available/create', [SportAvailableController::class, 'create'])->name('sport-available.create');
         Route::post('/sport-available', [SportAvailableController::class, 'store'])->name('sport-available.store');
         Route::get('/sport-available/{sportAvailable}/edit', [SportAvailableController::class, 'edit'])->name('sport-available.edit');

@@ -27,7 +27,7 @@
                             <h3 class="card-title">Create Sport Activity</h3>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{{ route('admin.sport_activity.store') }}">
+                            <form method="POST" action="{{ route('admin.sport-activity.store') }}">
                                 @csrf
 
                                 <div class="form-group">
@@ -48,7 +48,7 @@
 
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">Create Activity</button>
-                                    <a href="{{ route('admin.sport_activity.index') }}" class="btn btn-secondary">Cancel</a>
+                                    <a href="{{ route('admin.sport-activity.index') }}" class="btn btn-secondary">Cancel</a>
                                 </div>
                             </form>
                         </div>

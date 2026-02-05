@@ -4,7 +4,6 @@ import 'package:pathfit_mobile/providers/auth_provider.dart';
 import 'package:pathfit_mobile/providers/user_provider.dart';
 import 'package:pathfit_mobile/providers/training_provider.dart';
 import 'package:pathfit_mobile/screens/splash_screen.dart';
-import 'package:pathfit_mobile/services/api_service.dart';
 
 void main() {
   runApp(const PathFitApp());

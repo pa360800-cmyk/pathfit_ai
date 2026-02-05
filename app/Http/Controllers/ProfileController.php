@@ -41,7 +41,7 @@ class ProfileController extends Controller
                 'user' => $request->user(),
             ]);
         }
-        return view('profile.edits', [
+        return view('admin.profile.edits', [
             'user' => $request->user(),
         ]);
     }
@@ -102,7 +102,7 @@ class ProfileController extends Controller
 
         $user->save();
 
-        $route = $user->role === 'Athlete' ? 'athlete.profile.index' : ($user->role === 'Coach' ? 'coach.profile.index' : 'profile.edit');
+        $route = $user->role === 'Athlete' ? 'athlete.profile.index' : ($user->role === 'Coach' ? 'coach.profile.index' : 'admin.profile.edits');
         return Redirect::route($route)->with('status', 'profile-updated');
     }
 

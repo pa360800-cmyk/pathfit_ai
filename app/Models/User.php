@@ -71,6 +71,8 @@ class User extends Authenticatable
         'education_level',
         'school_university',
         'titles_won',
+        'subdomain',
+        'domain',
     ];
 
     protected $hidden = [

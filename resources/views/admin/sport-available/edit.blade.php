@@ -27,7 +27,7 @@
                             <h3 class="card-title">Edit Sport Available</h3>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{{ route('admin.sport_available.update', $sportAvailable->id) }}">
+                            <form method="POST" action="{{ route('admin.sport-available.update', $sportAvailable->id) }}">
                                 @csrf
                                 @method('PUT')
 
@@ -49,7 +49,7 @@
 
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">Update Sport Available</button>
-                                    <a href="{{ route('admin.sport_available.index') }}" class="btn btn-secondary">Cancel</a>
+                                    <a href="{{ route('admin.sport-available.index') }}" class="btn btn-secondary">Cancel</a>
                                 </div>
                             </form>
                         </div>

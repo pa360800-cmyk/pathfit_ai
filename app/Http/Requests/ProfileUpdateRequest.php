@@ -16,9 +16,7 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fname' => ['required', 'string', 'max:255'],
-            'mname' => ['nullable', 'string', 'max:255'],
-            'lname' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',

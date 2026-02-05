@@ -14,6 +14,12 @@ class SportAvailableController extends Controller
         return view('admin.sport-available.index', compact('sportAvailables'));
     }
 
+    public function show($id)
+    {
+        $sportAvailable = SportAvailable::findOrFail($id);
+        return view('admin.sport-available.show', compact('sportAvailable'));
+    }
+
     public function create()
     {
         return view('admin.sport-available.create');
@@ -63,6 +69,6 @@ class SportAvailableController extends Controller
         $sportAvailable = SportAvailable::findOrFail($id);
         $sportAvailable->delete();
 
-        return redirect()->route('admin.sport_available.index')->with('success', 'Sport available deleted successfully');
+        return redirect()->route('admin.sport-available.index')->with('success', 'Sport available deleted successfully');
     }
 }

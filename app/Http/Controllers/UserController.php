@@ -17,7 +17,7 @@ class UserController extends Controller
     public function userTrainingSchedule()
     {
         $user = Auth::user();
-        $trainingSchedules = TrainingSchedule::where('user_id', $user->id)->with('coach')->get();
+        $trainingSchedules = TrainingSchedule::where('coach_id', $user->coach_id)->with('coach')->get();
         return view('user.training-schedule', compact('trainingSchedules'));
     }
 
@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $coach = User::where('id', $user->coach_id)->first();
-        $trainingSchedules = TrainingSchedule::where('user_id', $user->id)->with('coach')->get();
+        $trainingSchedules = TrainingSchedule::where('coach_id', $user->coach_id)->with('coach')->get();
         return view('user.assigned-coach', compact('coach', 'trainingSchedules'));
     }
 
@@ -282,6 +282,70 @@ class UserController extends Controller
             $query->where('coach_id', $user->id);
         })->orderBy('activity_date', 'desc')->get();
 
+        // Chart Data: Athlete Performance Trends (Line Chart)
+        $performanceTrendLabels = [];
+        $performanceTrendData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $performanceTrendLabels[] = $month->format('M Y');
+            $avgPerformance = ActivityReport::whereHas('user', function($query) use ($user) {
+                $query->where('coach_id', $user->id);
+            })
+            ->whereYear('activity_date', $month->year)
+            ->whereMonth('activity_date', $month->month)
+            ->avg('performance_rating') ?? 0;
+            $performanceTrendData[] = round($avgPerformance, 1);
+        }
+
+        // Chart Data: Activity Distribution by Type (Pie Chart)
+        $activityTypes = ActivityReport::whereHas('user', function($query) use ($user) {
+            $query->where('coach_id', $user->id);
+        })->selectRaw('activity_type, COUNT(*) as count')
+        ->groupBy('activity_type')
+        ->get();
+        $activityDistributionLabels = $activityTypes->pluck('activity_type')->map('ucfirst')->toArray();
+        $activityDistributionData = $activityTypes->pluck('count')->toArray();
+
+        // Chart Data: Athlete Progress Comparison (Bar Chart)
+        $athleteProgress = [];
+        foreach ($athletes as $athlete) {
+            $avgRating = ActivityReport::where('user_id', $athlete->id)
+                ->avg('performance_rating') ?? 0;
+            $totalActivities = ActivityReport::where('user_id', $athlete->id)->count();
+            $athleteProgress[] = [
+                'name' => $athlete->name,
+                'avgRating' => round($avgRating, 1),
+                'totalActivities' => $totalActivities
+            ];
+        }
+        $athleteProgressLabels = collect($athleteProgress)->pluck('name')->toArray();
+        $athleteProgressData = collect($athleteProgress)->pluck('avgRating')->toArray();
+
+        // Chart Data: Training Hours Over Time (Area Chart)
+        $trainingHoursLabels = [];
+        $trainingHoursData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $trainingHoursLabels[] = $month->format('M Y');
+            $totalHours = ActivityReport::whereHas('user', function($query) use ($user) {
+                $query->where('coach_id', $user->id);
+            })
+            ->whereYear('activity_date', $month->year)
+            ->whereMonth('activity_date', $month->month)
+            ->sum('duration') / 60; // Convert minutes to hours
+            $trainingHoursData[] = round($totalHours, 1);
+        }
+
+        // Chart Data: Athlete Training Status (Pie Chart)
+        $trainingStatusData = $this->getAthleteTrainingStatus($athletes);
+
+        // AI Insights for Charts
+        $performanceTrendInsight = $this->generatePerformanceTrendInsight($performanceTrendData);
+        $activityDistributionInsight = $this->generateActivityDistributionInsight($activityDistributionLabels, $activityDistributionData);
+        $athleteProgressInsight = $this->generateAthleteProgressInsight($athleteProgressLabels, $athleteProgressData);
+        $trainingHoursInsight = $this->generateTrainingHoursInsight($trainingHoursLabels, $trainingHoursData);
+        $trainingStatusInsight = $this->generateTrainingStatusInsight($trainingStatusData['labels'], $trainingStatusData['data']);
+
         return view('coach.dashboard', compact(
             'athletes',
             'athletesCount',
@@ -289,7 +353,21 @@ class UserController extends Controller
             'recentActivities',
             'messagesCount',
             'upcomingSessionsList',
-            'recentActivitiesList'
+            'recentActivitiesList',
+            'performanceTrendLabels',
+            'performanceTrendData',
+            'activityDistributionLabels',
+            'activityDistributionData',
+            'athleteProgressLabels',
+            'athleteProgressData',
+            'trainingHoursLabels',
+            'trainingHoursData',
+            'trainingStatusData',
+            'performanceTrendInsight',
+            'activityDistributionInsight',
+            'athleteProgressInsight',
+            'trainingHoursInsight',
+            'trainingStatusInsight'
         ));
     }
 
@@ -991,6 +1069,133 @@ class UserController extends Controller
         return array_slice($achievements, 0, 3);
     }
 
+    private function generatePerformanceTrendInsight($data)
+    {
+        $apiKey = env('OPENAI_API_KEY');
+        if (!$apiKey || empty($data)) {
+            return "Performance trend analysis requires data and OpenAI API key.";
+        }
+
+        try {
+            $client = Client::factory()->withApiKey($apiKey)->make();
+
+            $dataString = implode(', ', $data);
+            $prompt = "Analyze this performance trend data (monthly average ratings over 6 months): {$dataString}\n\n";
+            $prompt .= "Provide a brief insight (2-3 sentences) about the team's performance trend, including whether it's improving, declining, or stable, and any recommendations for the coach.";
+
+            $response = $client->chat()->create([
+                'model' => 'gpt-3.5-turbo',
+                'messages' => [['role' => 'user', 'content' => $prompt]],
+                'max_tokens' => 200,
+                'temperature' => 0.7,
+            ]);
+
+            return $response->choices[0]->message->content;
+
+        } catch (\Exception $e) {
+            return "Unable to generate AI insight at this time.";
+        }
+    }
+
+    private function generateActivityDistributionInsight($labels, $data)
+    {
+        $apiKey = env('OPENAI_API_KEY');
+        if (!$apiKey || empty($data)) {
+            return "Activity distribution analysis requires data and OpenAI API key.";
+        }
+
+        try {
+            $client = Client::factory()->withApiKey($apiKey)->make();
+
+            $distribution = [];
+            foreach ($labels as $i => $label) {
+                $distribution[] = "{$label}: {$data[$i]}";
+            }
+            $dataString = implode(', ', $distribution);
+
+            $prompt = "Analyze this activity distribution data: {$dataString}\n\n";
+            $prompt .= "Provide a brief insight (2-3 sentences) about the team's activity focus, whether the balance is healthy, and any recommendations for training variety.";
+
+            $response = $client->chat()->create([
+                'model' => 'gpt-3.5-turbo',
+                'messages' => [['role' => 'user', 'content' => $prompt]],
+                'max_tokens' => 200,
+                'temperature' => 0.7,
+            ]);
+
+            return $response->choices[0]->message->content;
+
+        } catch (\Exception $e) {
+            return "Unable to generate AI insight at this time.";
+        }
+    }
+
+    private function generateAthleteProgressInsight($labels, $data)
+    {
+        $apiKey = env('OPENAI_API_KEY');
+        if (!$apiKey || empty($data)) {
+            return "Athlete progress analysis requires data and OpenAI API key.";
+        }
+
+        try {
+            $client = Client::factory()->withApiKey($apiKey)->make();
+
+            $progress = [];
+            foreach ($labels as $i => $label) {
+                $progress[] = "{$label}: {$data[$i]}";
+            }
+            $dataString = implode(', ', $progress);
+
+            $prompt = "Analyze this athlete progress data (average ratings): {$dataString}\n\n";
+            $prompt .= "Provide a brief insight (2-3 sentences) about individual athlete performance, identify any standout performers or those needing attention, and suggest coaching strategies.";
+
+            $response = $client->chat()->create([
+                'model' => 'gpt-3.5-turbo',
+                'messages' => [['role' => 'user', 'content' => $prompt]],
+                'max_tokens' => 200,
+                'temperature' => 0.7,
+            ]);
+
+            return $response->choices[0]->message->content;
+
+        } catch (\Exception $e) {
+            return "Unable to generate AI insight at this time.";
+        }
+    }
+
+    private function generateTrainingHoursInsight($labels, $data)
+    {
+        $apiKey = env('OPENAI_API_KEY');
+        if (!$apiKey || empty($data)) {
+            return "Training hours analysis requires data and OpenAI API key.";
+        }
+
+        try {
+            $client = Client::factory()->withApiKey($apiKey)->make();
+
+            $hours = [];
+            foreach ($labels as $i => $label) {
+                $hours[] = "{$label}: {$data[$i]} hours";
+            }
+            $dataString = implode(', ', $hours);
+
+            $prompt = "Analyze this training hours data over time: {$dataString}\n\n";
+            $prompt .= "Provide a brief insight (2-3 sentences) about training consistency and volume, assess if the training load is appropriate, and recommend adjustments if needed.";
+
+            $response = $client->chat()->create([
+                'model' => 'gpt-3.5-turbo',
+                'messages' => [['role' => 'user', 'content' => $prompt]],
+                'max_tokens' => 200,
+                'temperature' => 0.7,
+            ]);
+
+            return $response->choices[0]->message->content;
+
+        } catch (\Exception $e) {
+            return "Unable to generate AI insight at this time.";
+        }
+    }
+
     private function generateAISportSuggestions(User $user, $sports)
     {
         $apiKey = env('OPENAI_API_KEY');
@@ -1091,6 +1296,83 @@ class UserController extends Controller
             // Log the error and fall back to rule-based logic
             \Log::error('OpenAI API error: ' . $e->getMessage());
             return [];
+        }
+    }
+
+    private function getAthleteTrainingStatus($athletes)
+    {
+        $statusCounts = [
+            'Active' => 0,
+            'Injured' => 0,
+            'Resting' => 0,
+            'Inactive' => 0
+        ];
+
+        foreach ($athletes as $athlete) {
+            // Check for current injuries
+            $currentInjuries = $athlete->current_injuries ?? [];
+            if (!empty($currentInjuries)) {
+                $statusCounts['Injured']++;
+                continue;
+            }
+
+            // Check recent activity (last 7 days)
+            $recentActivity = ActivityReport::where('user_id', $athlete->id)
+                ->where('activity_date', '>=', now()->subDays(7))
+                ->exists();
+
+            if ($recentActivity) {
+                $statusCounts['Active']++;
+            } else {
+                // Check if they have any activity in the last 30 days
+                $monthActivity = ActivityReport::where('user_id', $athlete->id)
+                    ->where('activity_date', '>=', now()->subDays(30))
+                    ->exists();
+
+                if ($monthActivity) {
+                    $statusCounts['Resting']++;
+                } else {
+                    $statusCounts['Inactive']++;
+                }
+            }
+        }
+
+        return [
+            'labels' => array_keys($statusCounts),
+            'data' => array_values($statusCounts)
+        ];
+    }
+
+    private function generateTrainingStatusInsight($labels, $data)
+    {
+        $apiKey = env('OPENAI_API_KEY');
+        if (!$apiKey || empty($data)) {
+            return "Training status analysis requires data and OpenAI API key.";
+        }
+
+        try {
+            $client = Client::factory()->withApiKey($apiKey)->make();
+
+            $status = [];
+            foreach ($labels as $i => $label) {
+                $status[] = "{$label}: {$data[$i]} athletes";
+            }
+            $dataString = implode(', ', $status);
+
+            $prompt = "Analyze this athlete training status distribution: {$dataString}\n\n";
+            $prompt .= "Provide a brief insight (2-3 sentences) about the team's current training status, highlighting any concerns about athlete availability and suggesting actions for the coach.";
+
+            $response = $client->chat()->create([
+                'model' => 'gpt-3.5-turbo',
+                'messages' => [['role' => 'user', 'content' => $prompt]],
+                'max_tokens' => 200,
+                'temperature' => 0.7,
+            ]);
+
+            return $response->choices[0]->message->content;
+
+        } catch (\Exception $e) {
+            return "Unable to generate AI insight at this time.";
         }
     }
 }

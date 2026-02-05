@@ -9,7 +9,7 @@
     <style>
         .dashboard-container {
             padding: 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, rgb(79, 219, 98) 0%, #196d2e 100%);
             min-height: 100vh;
             max-width: 1200px;
             margin: 0 auto;
@@ -25,7 +25,7 @@
         }
 
         .dashboard-header h1 {
-            color: #667eea;
+            color: #66ea6d;
             font-size: 1.8rem;
             font-weight: 700;
             margin: 0;
@@ -35,7 +35,7 @@
         }
 
         .welcome-message {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg,rgb(79, 219, 98) 0%, #196d2e 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 12px;
@@ -61,11 +61,11 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg,rgb(79, 219, 98) 0%, #196d2e 100%);
             color: white;
             padding: 1rem;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(102, 234, 131, 0.753);
         }
 
         .stat-card h4 {
@@ -205,7 +205,7 @@
         }
 
         .info-section h3 {
-            color: #667eea;
+            color: #6ccf3e;
             font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 1rem;
@@ -226,7 +226,7 @@
             padding: 0.8rem;
             background: #f8f9fa;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #14660d;
         }
 
         .activity-icon {
@@ -250,7 +250,7 @@
         }
 
         .coach-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #90f369 0%, #1e7013 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 12px;
@@ -307,7 +307,7 @@
         }
 
         .achievement-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #96ea66 0%, #157425 100%);
             color: white;
             padding: 1rem;
             border-radius: 10px;

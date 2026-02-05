@@ -1,12 +1,35 @@
-# TODO: Add AI for Generating Athlete-Compatible Training
+# TODO: Add Free Domain and Subdomain Feature
 
-## Tasks
+## Step 1: Update User Model
 
-- [ ] Add `generateAiTraining` method to `AiBasedController.php`
-- [ ] Update `resources/views/admin/ai-based/index.blade.php` to include "Generate AI Training" button and display results
-- [ ] Test the AI training generation functionality
+- Add 'subdomain' and 'domain' fields to the fillable array in User.php
 
-## Completed
+## Step 2: Create Migration
 
-- [x] Analyze existing codebase and plan implementation
-- [x] Get user approval for plan
+- Create a migration to add 'subdomain' and 'domain' columns to the users table
+- Run the migration
+
+## Step 3: Update Routes for Subdomain Handling
+
+- Modify routes/web.php to handle subdomain routing
+- Add middleware for subdomain validation
+
+## Step 4: Create DomainController
+
+- Create a new controller for managing domains and subdomains
+- Add methods for creating, updating, and validating subdomains
+
+## Step 5: Create Views for Domain Management
+
+- Create views for users to manage their subdomains
+- Add forms for subdomain creation and editing
+
+## Step 6: Update Configuration
+
+- Update config/app.php if needed for domain handling
+- Ensure proper URL generation for subdomains
+
+## Step 7: Test the Feature
+
+- Test subdomain creation and routing
+- Verify that subdomains work correctly

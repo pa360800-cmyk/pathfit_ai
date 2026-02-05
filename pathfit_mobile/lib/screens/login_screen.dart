@@ -141,7 +141,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _submitForm() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_formKey.currentState == null || !_formKey.currentState!.validate()) {
+      return;
+    }
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     bool success;
@@ -166,24 +168,30 @@ class _LoginScreenState extends State<LoginScreen> {
       if (user != null) {
         final role = user['role'];
         if (role == 'athlete') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const AthleteDashboard()),
-          );
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const AthleteDashboard()),
+            );
+          }
         } else if (role == 'Coach') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const CoachDashboard()),
-          );
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const CoachDashboard()),
+            );
+          }
         }
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Authentication failed. Please try again.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Authentication failed. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
