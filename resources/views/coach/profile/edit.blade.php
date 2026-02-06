@@ -25,7 +25,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('coach.profile.update') }}" enctype="multipart/form-data">
                         @csrf
                         @method('PATCH')
 

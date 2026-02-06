@@ -416,14 +416,25 @@ class UserController extends Controller
             ->pluck('sport_available_id')
             ->unique();
 
-        // Get the names of sports that this coach specializes in
-        $sportNames = SportAvailable::whereIn('id', $coachSports)->pluck('name');
+        // Get athletes based on coach's specialization
+        if ($coachSports->isNotEmpty()) {
+            // Get the names of sports that this coach specializes in
+            $sportNames = SportAvailable::whereIn('id', $coachSports)->pluck('name');
 
-        // Get athletes who have selected sports that this coach specializes in
-        $athletes = User::where('role', 'Athlete')
-            ->whereNotNull('primary_sport')
-            ->whereIn('primary_sport', $sportNames)
-            ->paginate(10);
+            // Get athletes who have selected sports that this coach specializes in
+            $athletes = User::where('role', 'Athlete')
+                ->whereNotNull('primary_sport')
+                ->where(function($query) use ($sportNames) {
+                    foreach ($sportNames as $sportName) {
+                        $query->orWhere('primary_sport', 'LIKE', $sportName);
+                    }
+                })
+                ->paginate(10);
+        } else {
+            // If coach has no active sport requirements, show all athletes
+            $athletes = User::where('role', 'Athlete')
+                ->paginate(10);
+        }
 
         return view('coach.athletes.index', compact('athletes'));
     }

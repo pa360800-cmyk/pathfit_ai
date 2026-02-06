@@ -26,9 +26,7 @@
                         <div class="card-header">
                             <h3 class="card-title">Sport Available List</h3>
                             <div class="card-tools">
-                                <a href="{{ route('admin.sport-available.create') }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus"></i> Add New Sport Available
-                                </a>
+                                <a href="{{ route('admin.sport-available.create') }}" class="btn btn-primary btn-sm">Add New</a>
                             </div>
                         </div>
                         <div class="card-body">

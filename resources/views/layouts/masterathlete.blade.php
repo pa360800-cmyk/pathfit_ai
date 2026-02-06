@@ -481,6 +481,9 @@
      .acc{
         color: black;
      }
+          body::-webkit-scrollbar{
+        display: none;
+     }
     </style>
 </head>
 

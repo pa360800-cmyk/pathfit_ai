@@ -23,7 +23,7 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::get('/register', [RegisterController::class, 'registerread'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
-Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Protected routes
 Route::middleware(['auth', 'login_auth'])->group(function () {
@@ -81,13 +81,7 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
         Route::get('/sport-activity/{sportActivity}/edit', [SportActivityController::class, 'edit'])->name('sport-activity.edit');
         Route::put('/sport-activity/{sportActivity}', [SportActivityController::class, 'update'])->name('sport-activity.update');
         Route::delete('/sport-activity/{sportActivity}', [SportActivityController::class, 'destroy'])->name('sport-activity.destroy');
-        Route::get('/sport-available', [SportAvailableController::class, 'index'])->name('sport-available.index');
-        Route::get('/sport-available/{sportAvailable}', [SportAvailableController::class, 'show'])->name('sport-available.show');
-        Route::get('/sport-available/create', [SportAvailableController::class, 'create'])->name('sport-available.create');
-        Route::post('/sport-available', [SportAvailableController::class, 'store'])->name('sport-available.store');
-        Route::get('/sport-available/{sportAvailable}/edit', [SportAvailableController::class, 'edit'])->name('sport-available.edit');
-        Route::put('/sport-available/{sportAvailable}', [SportAvailableController::class, 'update'])->name('sport-available.update');
-        Route::delete('/sport-available/{sportAvailable}', [SportAvailableController::class, 'destroy'])->name('sport-available.destroy');
+        Route::resource('sport-available', SportAvailableController::class);
         Route::get('/ai-based', [AiBasedController::class, 'index'])->name('ai-based.index');
         Route::post('/ai-based/run-assignment', [AiBasedController::class, 'runAiAssignment'])->name('ai-based.run-assignment');
         Route::post('/ai-based/enable-assistance', [AiBasedController::class, 'enableAiAssistance'])->name('ai-based.enable-assistance');
@@ -161,4 +155,4 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php'; // Commented out to avoid route conflicts with custom auth routes

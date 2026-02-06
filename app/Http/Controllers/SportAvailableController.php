@@ -14,16 +14,18 @@ class SportAvailableController extends Controller
         return view('admin.sport-available.index', compact('sportAvailables'));
     }
 
+    public function create()
+    {
+        return view('admin.sport-available.create');
+    }
+
     public function show($id)
     {
         $sportAvailable = SportAvailable::findOrFail($id);
         return view('admin.sport-available.show', compact('sportAvailable'));
     }
 
-    public function create()
-    {
-        return view('admin.sport-available.create');
-    }
+
 
     public function store(Request $request)
     {

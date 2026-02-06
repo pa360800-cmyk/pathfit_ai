@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('subdomain')->nullable()->unique();
+            $table->string('subdomain')->nullable();
             $table->string('domain')->nullable();
+            $table->unique(['subdomain', 'domain']);
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropUnique(['subdomain']);
             $table->dropColumn(['subdomain', 'domain']);
         });
     }

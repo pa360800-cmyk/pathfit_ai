@@ -16,7 +16,9 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'fname' => ['required', 'string', 'max:255'],
+            'mname' => ['nullable', 'string', 'max:255'],
+            'lname' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',
@@ -76,6 +78,9 @@ class ProfileUpdateRequest extends FormRequest
             'medals_awards' => ['nullable', 'string'],
             'records_held' => ['nullable', 'string'],
             'notable_performances' => ['nullable', 'string'],
+            'specialization' => ['nullable', 'string', 'max:255'],
+            'experience' => ['nullable', 'integer', 'min:0', 'max:50'],
+            'education_level' => ['nullable', 'string', 'max:255'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ];
     }

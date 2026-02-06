@@ -141,6 +141,28 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="primary_sport">Primary Sport Coached</label>
+                                        <p class="form-control-plaintext">{{ $user->primary_sport ?: 'N/A' }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="certifications">Certifications</label>
+                                        <p class="form-control-plaintext">{{ $user->certifications ? \App\Helpers\ArrayHelper::ensureArrayAndImplode($user->certifications) : 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="education_level">Education Level</label>
+                                        <p class="form-control-plaintext">{{ $user->education_level ?: 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="role">Role</label>

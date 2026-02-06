@@ -479,6 +479,9 @@
      .image{
       width: 100%;
      }
+               body::-webkit-scrollbar{
+        display: none;
+     }
     </style>
 </head>
 
@@ -498,10 +501,13 @@
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('logout') }}" role="button">
-                        <i class="fas fa-power-off"></i>
-                        <b>Sign Out</b>
-                    </a>
+                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="nav-link" style="background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer;" role="button">
+                            <i class="fas fa-power-off"></i>
+                            <b>Sign Out</b>
+                        </button>
+                    </form>
                 </li>
             </ul>
         </nav>

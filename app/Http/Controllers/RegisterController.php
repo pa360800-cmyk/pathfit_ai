@@ -12,20 +12,17 @@ class RegisterController extends Controller
     public function registerread(Request $request)
     {
         // Handle GET request - show registration form
-        return view('register');
+        return view('auth.register');
     }
 
     public function register(Request $request)
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
-            'fname' => 'required|string|max:255',
-            'mname' => 'nullable|string|max:255',
-            'lname' => 'required|string|max:255',
-            'course' => 'required|string|max:255',
-            'gender' => 'required|in:male,female',
+            'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'terms' => 'accepted',
         ]);
 
         if ($validator->fails()) {
@@ -37,16 +34,15 @@ class RegisterController extends Controller
 
         try {
             // Create the user
-            $fullName = trim($request->fname . ' ' . ($request->mname ? $request->mname . ' ' : '') . $request->lname);
             $user = User::create([
-                'name' => $fullName,
+                'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'fname' => $request->fname,
-                'mname' => $request->mname,
-                'lname' => $request->lname,
-                'course' => $request->course,
-                'gender' => $request->gender,
+                'fname' => null,
+                'mname' => null,
+                'lname' => null,
+                'course' => null,
+                'gender' => null,
                 'role' => 'Athlete', // Default role
             ]);
 
