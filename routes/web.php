@@ -105,6 +105,7 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
         Route::get('/ai-based', [AiBasedController::class, 'index'])->name('ai-based.index');
         Route::post('/ai-based/run-assignment', [AiBasedController::class, 'runAiAssignment'])->name('ai-based.run-assignment');
         Route::post('/ai-based/enable-assistance', [AiBasedController::class, 'enableAiAssistance'])->name('ai-based.enable-assistance');
+        Route::resource('events', \App\Http\Controllers\AdminEventController::class);
     });
 
     // Athlete routes
@@ -125,6 +126,10 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
 
         // Athlete Session Schedule routes
         Route::get('/session-schedules', [SessionScheduleController::class, 'athleteIndex'])->name('session-schedules.index');
+
+        // Athlete Events routes (read-only)
+        Route::get('/events', [\App\Http\Controllers\AthleteEventController::class, 'index'])->name('events.index');
+        Route::get('/events/{event}', [\App\Http\Controllers\AthleteEventController::class, 'show'])->name('events.show');
     });
 
     // Coach routes
@@ -172,5 +177,16 @@ Route::middleware(['auth', 'login_auth'])->group(function () {
         Route::get('/session-schedules/{sessionSchedule}/edit', [SessionScheduleController::class, 'coachEdit'])->name('session-schedules.edit');
         Route::put('/session-schedules/{sessionSchedule}', [SessionScheduleController::class, 'coachUpdate'])->name('session-schedules.update');
         Route::delete('/session-schedules/{sessionSchedule}', [SessionScheduleController::class, 'coachDestroy'])->name('session-schedules.destroy');
+
+        // Coach Events routes
+        Route::resource('events', \App\Http\Controllers\CoachEventController::class)->names([
+            'index' => 'events.index',
+            'create' => 'events.create',
+            'store' => 'events.store',
+            'show' => 'events.show',
+            'edit' => 'events.edit',
+            'update' => 'events.update',
+            'destroy' => 'events.destroy',
+        ]);
     });
 });

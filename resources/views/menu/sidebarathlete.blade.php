@@ -9,6 +9,7 @@
     $sportSuggestionActive = in_array($curr_route, ['athlete.sport-suggestion']) ? 'active' : '';
     $sessionSchedulesActive = in_array($curr_route, ['athlete.session-schedules.index']) ? 'active' : '';
     $messengerActive = in_array($curr_route, ['user.messenger']) ? 'active' : '';
+    $eventsActive = in_array($curr_route, ['athlete.events.index', 'athlete.events.show']) ? 'active' : '';
     $profileActive = in_array($curr_route, ['athlete.profile.index']) ? 'active' : '';
     $accountSettingsActive = in_array($curr_route, ['athlete.account-settings.index']) ? 'active' : '';
     $unreadMessagesCount = Message::where('receiver_id', $user->id)->where('is_read', false)->count();
@@ -115,6 +116,14 @@
             <a href="{{ route('athlete.sport-suggestion') }}" class="nav-link {{ $sportSuggestionActive }}">
                 <i class="nav-icon fas fa-lightbulb"></i>
                 <p>Sport Suggestion</p>
+            </a>
+        </li>
+
+        <!-- Events -->
+        <li class="nav-item">
+            <a href="{{ route('athlete.events.index') }}" class="nav-link {{ $eventsActive }}">
+                <i class="nav-icon fas fa-calendar-alt"></i>
+                <p>Events</p>
             </a>
         </li>
 

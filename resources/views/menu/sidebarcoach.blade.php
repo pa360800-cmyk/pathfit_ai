@@ -9,6 +9,7 @@
     $activityReportsActive = in_array($curr_route, ['coach.activity-reports.index']) ? 'active' : '';
     $sportRequirementsActive = in_array($curr_route, ['coach.sport-requirements.index', 'coach.sport-requirements.create', 'coach.sport-requirements.show', 'coach.sport-requirements.edit']) ? 'active' : '';
     $messagesActive = in_array($curr_route, ['coach.messages.index', 'user.messenger']) ? 'active' : '';
+    $eventsActive = in_array($curr_route, ['coach.events.index', 'coach.events.create', 'coach.events.edit', 'coach.events.show']) ? 'active' : '';
     $unreadMessagesCount = Message::where('receiver_id', $user->id)->where('is_read', false)->count();
 @endphp
 
@@ -127,6 +128,13 @@
             <a href="{{ route('coach.sport-requirements.index') }}" class="nav-link {{ $sportRequirementsActive }}">
                 <i class="nav-icon fas fa-list-check"></i>
                 <p>Sport Requirements</p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ route('coach.events.index') }}" class="nav-link {{ $eventsActive }}">
+                <i class="nav-icon fas fa-calendar-alt"></i>
+                <p>Events</p>
             </a>
         </li>
 
