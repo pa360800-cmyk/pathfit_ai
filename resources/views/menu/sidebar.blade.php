@@ -12,6 +12,8 @@
     $assignCoachActive = in_array($curr_route, ['admin.assigncoach']) ? 'active' : '';
 @endphp
 
+
+
 <style>
     .nav-sidebar .nav-link {
         background: linear-gradient(135deg, #ffffff 0%, #eeebf1 100%);

@@ -91,10 +91,19 @@
 
                                 <!-- Action Button -->
                                 <div class="mt-auto">
-                                    <button class="btn btn-{{ $index === 0 ? 'success' : 'primary' }} btn-block font-weight-bold"
-                                            onclick="showTrainingModal('{{ $suggestion['sport']->name }}', {{ $suggestion['score'] }}, {{ $suggestion['sport']->id }})">
-                                        <i class="fas fa-play-circle mr-2"></i>Start Training
-                                    </button>
+                                    @if($index === 0)
+                                        <button class="btn btn-success btn-block font-weight-bold sport-select-btn"
+                                                onclick="selectSport('{{ $suggestion['sport']->name }}', {{ $suggestion['score'] }}, {{ $suggestion['sport']->id }}, this)"
+                                                data-sport-id="{{ $suggestion['sport']->id }}">
+                                            <i class="fas fa-play-circle mr-2"></i>Start Training
+                                        </button>
+                                    @else
+                                        <button class="btn btn-secondary btn-block font-weight-bold disabled"
+                                                disabled
+                                                title="Select the top recommended sport first">
+                                            <i class="fas fa-lock mr-2"></i>Locked
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -172,9 +181,9 @@
                 <p>This feature is coming soon! Contact your coach to begin training in this sport.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="contactCoach()">
-                    <i class="fas fa-envelope mr-2"></i>Contact Coach
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="confirmSportSelection()">
+                    <i class="fas fa-check mr-2"></i>Confirm Selection
                 </button>
             </div>
         </div>
@@ -305,6 +314,45 @@
 @push('scripts')
 <script>
     let currentSportId = null;
+    let selectedSport = null;
+
+    function selectSport(sportName, score, sportId, buttonElement) {
+        // Show confirmation modal
+        $('#modalSportName').text(`Confirm selection: ${sportName}`);
+        $('#modalScore').text(`${score}%`);
+        currentSportId = sportId;
+        selectedSport = { name: sportName, score: score, id: sportId, button: buttonElement };
+        $('#trainingModal').modal('show');
+    }
+
+    function confirmSportSelection() {
+        if (selectedSport) {
+            // Update the selected button
+            $(selectedSport.button).removeClass('btn-success').addClass('btn-warning');
+            $(selectedSport.button).html('<i class="fas fa-check mr-2"></i>Selected');
+            $(selectedSport.button).prop('disabled', true);
+
+            // Disable all other sport selection buttons
+            $('.sport-select-btn').not(selectedSport.button).each(function() {
+                $(this).removeClass('btn-success').addClass('btn-secondary');
+                $(this).html('<i class="fas fa-lock mr-2"></i>Unavailable');
+                $(this).prop('disabled', true);
+            });
+
+            // Disable all locked buttons as well
+            $('.btn-secondary.disabled').prop('disabled', true);
+
+            // Show success message
+            showSuccessMessage(`You have selected ${selectedSport.name} for training!`);
+
+            // Store selection (you can implement AJAX call here to save to database)
+            // $.post('/athlete/select-sport', { sport_id: selectedSport.id }, function(response) {
+            //     console.log('Sport selection saved');
+            // });
+
+            $('#trainingModal').modal('hide');
+        }
+    }
 
     function showTrainingModal(sportName, score, sportId) {
         $('#modalSportName').text(`Ready to start training in ${sportName}?`);
@@ -320,6 +368,27 @@
             alert('Unable to find coach for this sport.');
         }
         $('#trainingModal').modal('hide');
+    }
+
+    function showSuccessMessage(message) {
+        // Create and show a success toast/message
+        if ($('#successToast').length === 0) {
+            $('body').append(`
+                <div id="successToast" class="toast" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                    <div class="toast-header bg-success text-white">
+                        <strong class="mr-auto"><i class="fas fa-check-circle mr-2"></i>Success</strong>
+                        <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">&times;</button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `);
+        } else {
+            $('#successToast .toast-body').text(message);
+        }
+        $('#successToast').toast({ delay: 5000 });
+        $('#successToast').toast('show');
     }
 
     // Add smooth scrolling and animations

@@ -191,7 +191,6 @@
         .user-panel .image img {
             width: 70px !important;
             height: 70px !important;
-            border-radius: 50%;
             border: 2px solid var(--border);
             box-shadow: 0 2px 6px var(--shadow-sm);
             transition: all 0.3s ease;
@@ -523,10 +522,17 @@
             </a>
 
             <div class="sidebar">
+                @php
+                    $user = Auth::user();
+                @endphp
                 <center>
-                    <div class="user-panel pb-3 mb-2">
-                        <div class="img">
-                            <img src="{{ asset('templates/dist/img/grad.avif') }}" style="width: 150px; height: 100px;">
+                    <div class="user-panel  ">
+                        <div class="">
+                            @if($user->photo)
+                                <img src="{{ asset('storage/' . $user->photo) }}" class="" alt="User Image" style="width: 100px; height: 100px; object-fit: cover;">
+                            @else
+                                <img src="{{ asset('images/default-avatar.png') }}" class="" alt="Default User Image" style="width: 100px; height: 100px; object-fit: cover;">
+                            @endif
                         </div>
                     </div>
                 </center>

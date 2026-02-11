@@ -22,7 +22,11 @@
                         <div class="contact-item mb-3 p-3 border rounded">
                             <div class="d-flex align-items-center">
                                 <div class="avatar-circle me-3">
-                                    <span class="avatar-text">{{ substr($contactData['contact']->name, 0, 1) }}</span>
+                                    @if($contactData['contact']->photo)
+                                        <img src="{{ asset('storage/' . $contactData['contact']->photo) }}" alt="{{ $contactData['contact']->name }}" class="avatar-img">
+                                    @else
+                                        <span class="avatar-text">{{ substr($contactData['contact']->name, 0, 1) }}</span>
+                                    @endif
                                 </div>
                                 <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between align-items-start">
@@ -94,6 +98,13 @@
     color: white;
     font-weight: bold;
     font-size: 18px;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 </style>
 @endsection

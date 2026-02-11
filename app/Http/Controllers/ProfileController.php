@@ -21,6 +21,8 @@ class ProfileController extends Controller
         $user = $request->user();
         if ($user->role === 'Athlete') {
             return view('athlete.profile.index', compact('user'));
+        } elseif ($user->role === 'Coach') {
+            return view('coach.profile.index', compact('user'));
         }
         return view('admin.profile.index', compact('user'));
     }
@@ -32,6 +34,10 @@ class ProfileController extends Controller
     {
         if ($request->user()->role === 'Athlete') {
             return view('athlete.profile.edit', [
+                'user' => $request->user(),
+            ]);
+        } elseif ($request->user()->role === 'Coach') {
+            return view('coach.profile.edit', [
                 'user' => $request->user(),
             ]);
         }
@@ -96,7 +102,7 @@ class ProfileController extends Controller
 
         $user->save();
 
-        $route = $user->role === 'Athlete' ? 'athlete.profile.index' : 'profile.edit';
+        $route = $user->role === 'Athlete' ? 'athlete.profile.index' : ($user->role === 'Coach' ? 'coach.profile.index' : 'profile.edit');
         return Redirect::route($route)->with('status', 'profile-updated');
     }
 
