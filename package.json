@@ -19,6 +19,27 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
-        "chart.js": "^4.5.1"
-    }
+        "chart.js": "^4.5.1",
+        "dotenv": "^17.2.4",
+        "express": "^5.2.1",
+        "pg": "^8.18.0"
+    },
+    "name": "pathfit_final",
+    "version": "1.0.0",
+    "description": "<p align=\"center\"><a href=\"https://laravel.com\" target=\"_blank\"><img src=\"https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg\" width=\"400\" alt=\"Laravel Logo\"></a></p>",
+    "main": "postcss.config.js",
+    "directories": {
+        "test": "tests"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pa360800-cmyk/pathfit_ai.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/pa360800-cmyk/pathfit_ai/issues"
+    },
+    "homepage": "https://github.com/pa360800-cmyk/pathfit_ai#readme"
 }
