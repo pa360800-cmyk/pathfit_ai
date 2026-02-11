@@ -9,7 +9,7 @@
     <style>
         .dashboard-container {
             padding: 1.5rem;
-            background: linear-gradient(135deg, rgb(79, 219, 98) 0%, #196d2e 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             min-height: 100vh;
             max-width: 1200px;
             margin: 0 auto;
@@ -25,7 +25,7 @@
         }
 
         .dashboard-header h1 {
-            color: #66ea6d;
+            color: #667eea;
             font-size: 1.8rem;
             font-weight: 700;
             margin: 0;
@@ -35,7 +35,7 @@
         }
 
         .welcome-message {
-            background: linear-gradient(135deg,rgb(79, 219, 98) 0%, #196d2e 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 12px;
@@ -61,11 +61,11 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg,rgb(79, 219, 98) 0%, #196d2e 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             color: white;
             padding: 1rem;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(102, 234, 131, 0.753);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         .stat-card h4 {
@@ -205,7 +205,7 @@
         }
 
         .info-section h3 {
-            color: #6ccf3e;
+            color: #667eea;
             font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 1rem;
@@ -226,7 +226,7 @@
             padding: 0.8rem;
             background: #f8f9fa;
             border-radius: 8px;
-            border-left: 4px solid #14660d;
+            border-left: 4px solid #667eea;
         }
 
         .activity-icon {
@@ -250,7 +250,7 @@
         }
 
         .coach-card {
-            background: linear-gradient(135deg, #90f369 0%, #1e7013 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 12px;
@@ -307,7 +307,7 @@
         }
 
         .achievement-card {
-            background: linear-gradient(135deg, #96ea66 0%, #157425 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             color: white;
             padding: 1rem;
             border-radius: 10px;
@@ -405,22 +405,7 @@
 
         <!-- Upcoming Sessions & Coach Info -->
         <div class="chart-row">
-            <div class="info-section">
-                <h3>📅 Upcoming Sessions</h3>
-                <div class="activity-list">
-                    @forelse($upcomingSessions as $session)
-                    <div class="activity-item">
-                        <div class="activity-icon">📅</div>
-                        <div class="activity-content">
-                            <div class="activity-title">{{ $session->title ?? 'Training Session' }}</div>
-                            <div class="activity-meta">{{ $session->date }} • {{ $session->time ?? 'TBD' }}</div>
-                        </div>
-                    </div>
-                    @empty
-                    <p style="color: #666; text-align: center; padding: 1rem;">No upcoming sessions scheduled.</p>
-                    @endforelse
-                </div>
-            </div>
+ 
 
             <div class="info-section">
                 <h3>👨‍🏫 Your Coach</h3>

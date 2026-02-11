@@ -26,7 +26,7 @@
                         <div class="card-header">
                             <h3 class="card-title">Sport Activities List</h3>
                             <div class="card-tools">
-                                <a href="{{ route('admin.sport-activity.create') }}" class="btn btn-primary btn-sm">
+                                <a href="{{ route('admin.sport_activity.create') }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus"></i> Add New Activity
                                 </a>
                             </div>
@@ -56,8 +56,8 @@
                                             <td>{{ $activity->description }}</td>
                                             <td>{{ $activity->created_at->format('Y-m-d H:i:s') }}</td>
                                             <td>
-                                                <a href="{{ route('admin.sport-activity.edit', $activity) }}" class="btn btn-sm btn-info">Edit</a>
-                                                <form action="{{ route('admin.sport-activity.destroy', $activity) }}" method="POST" style="display: inline;">
+                                                <a href="{{ route('admin.sport_activity.edit', $activity) }}" class="btn btn-sm btn-info">Edit</a>
+                                                <form action="{{ route('admin.sport_activity.destroy', $activity) }}" method="POST" style="display: inline;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this activity?')">Delete</button>

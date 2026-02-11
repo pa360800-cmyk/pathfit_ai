@@ -42,35 +42,66 @@ class UsersController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
-    public function show(User $user)
-    {
-        return view('admin.users.show', compact('user'));
-    }
-
     public function adminDashboard()
     {
         $users = User::all();
+
+        // Data for charts
         $totalUsers = User::count();
-        $totalCoaches = User::where('role', 'Coach')->count();
         $totalAthletes = User::where('role', 'Athlete')->count();
-        $totalAdministrators = User::where('role', 'Administrator')->count();
-        $totalSports = \App\Models\SportAvailable::count();
-        $totalActivities = \App\Models\SportActivity::count();
-        $recentUsers = User::latest()->take(10)->get();
-        $recentCoaches = User::where('role', 'Coach')->latest()->take(5)->get();
-        $recentAthletes = User::where('role', 'Athlete')->latest()->take(5)->get();
+        $totalCoaches = User::where('role', 'Coach')->count();
+        $totalAdmins = User::where('role', 'Administrator')->count();
+
+        // Athletes by sport (assuming primary_sport field)
+        $athletesBySport = User::where('role', 'Athlete')
+            ->whereNotNull('primary_sport')
+            ->selectRaw('primary_sport, COUNT(*) as count')
+            ->groupBy('primary_sport')
+            ->get();
+
+        // Coaches by specialization
+        $coachesBySpecialization = User::where('role', 'Coach')
+            ->whereNotNull('specialization')
+            ->selectRaw('specialization, COUNT(*) as count')
+            ->groupBy('specialization')
+            ->get();
+
+        // Activity reports count (assuming ActivityReport model exists)
+        $activityReports = \App\Models\ActivityReport::count();
+
+        // Recent activity reports (last 7 days)
+        $recentActivities = \App\Models\ActivityReport::where('created_at', '>=', now()->subDays(7))->count();
+
+        // Athletes details
+        $athletes = User::where('role', 'Athlete')->get();
+        $athleteAges = $athletes->map(function ($athlete) {
+            return $athlete->age ?? (now()->diffInYears($athlete->date_of_birth));
+        })->filter()->values();
+        $athleteGenders = $athletes->whereNotNull('gender')->groupBy('gender')->map->count();
+        $athleteLevels = $athletes->whereNotNull('level')->groupBy('level')->map->count();
+
+        // Coaches details
+        $coaches = User::where('role', 'Coach')->get();
+        $coachExperiences = $coaches->whereNotNull('experience')->groupBy('experience')->map->count();
+        $coachAthleteCounts = $coaches->map(function ($coach) {
+            return User::where('role', 'Athlete')->where('coach_id', $coach->id)->count();
+        });
 
         return view('admin.dashboard', compact(
             'users',
             'totalUsers',
-            'totalCoaches',
             'totalAthletes',
-            'totalAdministrators',
-            'totalSports',
-            'totalActivities',
-            'recentUsers',
-            'recentCoaches',
-            'recentAthletes'
+            'totalCoaches',
+            'totalAdmins',
+            'athletesBySport',
+            'coachesBySpecialization',
+            'activityReports',
+            'recentActivities',
+            'athleteAges',
+            'athleteGenders',
+            'athleteLevels',
+            'coachExperiences',
+            'coachAthleteCounts'
         ));
     }
 

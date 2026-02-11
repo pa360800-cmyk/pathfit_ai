@@ -78,9 +78,6 @@ class ProfileUpdateRequest extends FormRequest
             'medals_awards' => ['nullable', 'string'],
             'records_held' => ['nullable', 'string'],
             'notable_performances' => ['nullable', 'string'],
-            'specialization' => ['nullable', 'string', 'max:255'],
-            'experience' => ['nullable', 'integer', 'min:0', 'max:50'],
-            'education_level' => ['nullable', 'string', 'max:255'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ];
     }

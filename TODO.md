@@ -1,6 +1,8 @@
-# TODO: Fix Route Caching Error
+# TODO: Add Email Notifications for Registration Success/Denial
 
-## Steps to Complete
+## Tasks
 
-- [ ] Edit routes/auth.php to prefix all route names with 'auth.' to resolve duplicate name conflicts (e.g., 'logout' -> 'auth.logout', 'login' -> 'auth.login', etc.)
-- [ ] Run `php artisan route:cache` to verify the fix and ensure routes cache successfully
+- [x] Create app/Mail/RegistrationNotification.php Mailable class for sending registration outcome emails
+- [x] Update app/Http/Controllers/RegisterController.php to send success email after user creation
+- [x] Update app/Http/Controllers/RegisterController.php to send denial email on validation failure or exception
+- [ ] Test email functionality (ensure mail config is set for actual sending if needed)

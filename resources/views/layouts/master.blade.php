@@ -479,9 +479,6 @@
      .image{
       width: 100%;
      }
-               body::-webkit-scrollbar{
-        display: none;
-     }
     </style>
 </head>
 
@@ -501,13 +498,10 @@
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                        @csrf
-                        <button type="submit" class="nav-link" style="background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer;" role="button">
-                            <i class="fas fa-power-off"></i>
-                            <b>Sign Out</b>
-                        </button>
-                    </form>
+                    <a class="nav-link" href="{{ route('logout') }}" role="button">
+                        <i class="fas fa-power-off"></i>
+                        <b>Sign Out</b>
+                    </a>
                 </li>
             </ul>
         </nav>
@@ -530,9 +524,9 @@
                     <div class="user-panel">
                         <div class="">
                             @if($user->photo)
-                                <img src="{{ asset('storage/' . $user->photo) }}" class="" alt="User Image" style="width: 100px; height: 100px; object-fit: cover; " onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNjY2MiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSIxNSIgZmlsbD0iIzY2NiIvPgogIDxwYXRoIGQ9Ik0yMCA4MCBRMjAgNjAgNTAgNjAgUTgwIDYwIDgwIDgwIiBmaWxsPSIjNjY2Ii8+Cjwvc3ZnPg=='">
+                                <img src="{{ asset('storage/' . $user->photo) }}" class="" alt="User Image" style="width: 100px; height: 100px; object-fit: cover; ">
                             @else
-                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNjY2MiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSIxNSIgZmlsbD0iIzY2NiIvPgogIDxwYXRoIGQ9Ik0yMCA4MCBRMjAgNjAgNTAgNjAgUTgwIDYwIDgwIDgwIiBmaWxsPSIjNjY2Ii8+Cjwvc3ZnPg==" class="" alt="Temporary User Image" style="width: 100px; height: 100px; object-fit: cover;">
+                                <img src="{{ asset('images/default-avatar.png') }}" class="" alt="Default User Image" style="width: 100px; height: 100px; object-fit: cover;">
                             @endif
                         </div>
                     </div>
@@ -600,6 +594,9 @@
     <script src="{{ asset('templates/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('templates/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('templates/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         @if(Session::has('error'))

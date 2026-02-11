@@ -34,7 +34,7 @@ class SportActivityController extends Controller
         // Assuming SportActivity model exists, create the activity
         SportActivity::create($request->all());
 
-        return redirect()->route('admin.sport-activity.index')->with('success', 'Sport activity created successfully');
+        return redirect()->route('admin.sport_activity.index')->with('success', 'Sport activity created successfully');
     }
 
     public function edit($id)
@@ -57,7 +57,7 @@ class SportActivityController extends Controller
         $sportActivity = SportActivity::findOrFail($id);
         $sportActivity->update($request->all());
 
-        return redirect()->route('admin.sport-activity.index')->with('success', 'Sport activity updated successfully');
+        return redirect()->route('admin.sport_activity.index')->with('success', 'Sport activity updated successfully');
     }
 
     public function destroy($id)
@@ -65,6 +65,6 @@ class SportActivityController extends Controller
         $sportActivity = SportActivity::findOrFail($id);
         $sportActivity->delete();
 
-        return redirect()->route('admin.sport-activity.index')->with('success', 'Sport activity deleted successfully');
+        return redirect()->route('admin.sport_activity.index')->with('success', 'Sport activity deleted successfully');
     }
 }

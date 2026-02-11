@@ -6,13 +6,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Edit Sport Available</h1>
+                    <h1 class="m-0">Sport Available</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('admin.sport-available.index') }}">Sport Available</a></li>
-                        <li class="breadcrumb-item active">Edit</li>
+                        <li class="breadcrumb-item active">Sport Available</li>
                     </ol>
                 </div>
             </div>
@@ -28,29 +27,30 @@
                             <h3 class="card-title">Edit Sport Available</h3>
                         </div>
                         <div class="card-body">
-                            @if($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
-                            <form action="{{ route('admin.sport-available.update', $sportAvailable) }}" method="POST">
+                            <form method="POST" action="{{ route('admin.sport_available.update', $sportAvailable->id) }}">
                                 @csrf
                                 @method('PUT')
+
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $sportAvailable->name) }}" required>
+                                    <input type="text" name="name" id="name" value="{{ old('name', $sportAvailable->name) }}" class="form-control" required>
+                                    @error('name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
+
                                 <div class="form-group">
                                     <label for="description">Description</label>
-                                    <textarea class="form-control" id="description" name="description" rows="3">{{ old('description', $sportAvailable->description) }}</textarea>
+                                    <textarea name="description" id="description" rows="3" class="form-control">{{ old('description', $sportAvailable->description) }}</textarea>
+                                    @error('description')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
-                                <button type="submit" class="btn btn-primary">Update</button>
-                                <a href="{{ route('admin.sport-available.index') }}" class="btn btn-secondary">Cancel</a>
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Update Sport Available</button>
+                                    <a href="{{ route('admin.sport_available.index') }}" class="btn btn-secondary">Cancel</a>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -59,4 +59,5 @@
         </div>
     </section>
 </div>
+
 @endsection

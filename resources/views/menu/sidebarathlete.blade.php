@@ -10,6 +10,7 @@
     $sessionSchedulesActive = in_array($curr_route, ['athlete.session-schedules.index']) ? 'active' : '';
     $messengerActive = in_array($curr_route, ['user.messenger']) ? 'active' : '';
     $profileActive = in_array($curr_route, ['athlete.profile.index']) ? 'active' : '';
+    $accountSettingsActive = in_array($curr_route, ['athlete.account-settings.index']) ? 'active' : '';
     $unreadMessagesCount = Message::where('receiver_id', $user->id)->where('is_read', false)->count();
 @endphp
 
@@ -79,7 +80,7 @@
 
         <!-- Training Schedule -->
         <li class="nav-item">
-            <a href="{{ route('athlete.training-schedule.index') }}" class="nav-link {{ $trainingScheduleActive }}">
+            <a href="{{ route('user.training-schedule') }}" class="nav-link {{ $trainingScheduleActive }}">
                 <i class="nav-icon fas fa-calendar-alt"></i>
                 <p>Training Schedule</p>
             </a>
@@ -141,6 +142,8 @@
                 <p>Profile</p>
             </a>
         </li>
+
+
 
         <!-- Sign Out -->
         <li class="nav-item">

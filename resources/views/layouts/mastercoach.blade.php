@@ -29,9 +29,6 @@
     <link rel="stylesheet" href="{{ asset('templates/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('templates/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}" />
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <!-- Logo  -->
     <link rel="shortcut icon" type="" href="{{ asset('templates/dist/img/cpsulogo.jpg') }}" />
 
@@ -484,9 +481,6 @@
      }
      .acc{
         color: black;
-     }
-          body::-webkit-scrollbar{
-        display: none;
      }
     </style>
 </head>

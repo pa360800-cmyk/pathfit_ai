@@ -37,10 +37,11 @@ class UserdashboardController extends Controller
             ->get();
 
         // Upcoming Sessions
-        $upcomingSessions = \App\Models\TrainingSchedule::where('user_id', $user->id)
+        $upcomingSessions = \App\Models\SessionSchedule::where('athlete_id', $user->id)
             ->where('date', '>=', now()->toDateString())
             ->orderBy('date')
             ->limit(3)
+            ->with('coach')
             ->get();
 
         // Injury Status
@@ -203,61 +204,6 @@ class UserdashboardController extends Controller
             $query->where('coach_id', $user->id);
         })->orderBy('activity_date', 'desc')->get();
 
-        // Chart Data from ActivityReport database
-        // Performance Trend: Average performance rating over last 6 months
-        $performanceTrend = [];
-        $performanceTrendLabels = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $month = $date->format('M Y');
-            $avgRating = \App\Models\ActivityReport::whereHas('user', function($query) use ($user) {
-                $query->where('coach_id', $user->id);
-            })
-            ->whereYear('activity_date', $date->year)
-            ->whereMonth('activity_date', $date->month)
-            ->avg('performance_rating') ?? 0;
-            $performanceTrend[] = round($avgRating, 1);
-            $performanceTrendLabels[] = $month;
-        }
-        $performanceTrendInsight = $this->generatePerformanceInsight($performanceTrend);
-
-        // Activity Distribution: Count activities by type
-        $activityDistribution = \App\Models\ActivityReport::whereHas('user', function($query) use ($user) {
-            $query->where('coach_id', $user->id);
-        })
-        ->selectRaw('activity_name, COUNT(*) as count')
-        ->groupBy('activity_name')
-        ->orderBy('count', 'desc')
-        ->limit(5)
-        ->get()
-        ->pluck('count', 'activity_name')
-        ->toArray();
-        $activityDistributionInsight = $this->generateActivityDistributionInsight($activityDistribution);
-
-        // Athlete Progress Comparison: Average performance by athlete
-        $athleteProgress = [];
-        foreach ($athletes as $athlete) {
-            $avgPerformance = \App\Models\ActivityReport::where('user_id', $athlete->id)
-                ->avg('performance_rating') ?? 0;
-            $athleteProgress[$athlete->name] = round($avgPerformance, 1);
-        }
-
-        // Training Hours Over Time: Total hours over last 6 months
-        $trainingHours = [];
-        $trainingHoursLabels = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $month = $date->format('M Y');
-            $totalHours = \App\Models\ActivityReport::whereHas('user', function($query) use ($user) {
-                $query->where('coach_id', $user->id);
-            })
-            ->whereYear('activity_date', $date->year)
-            ->whereMonth('activity_date', $date->month)
-            ->sum('duration') / 60; // Convert minutes to hours
-            $trainingHours[] = round($totalHours, 1);
-            $trainingHoursLabels[] = $month;
-        }
-
         return view('coach.dashboard', compact(
             'athletes',
             'athletesCount',
@@ -265,15 +211,7 @@ class UserdashboardController extends Controller
             'recentActivities',
             'messagesCount',
             'upcomingSessionsList',
-            'recentActivitiesList',
-            'performanceTrend',
-            'performanceTrendLabels',
-            'performanceTrendInsight',
-            'activityDistribution',
-            'activityDistributionInsight',
-            'athleteProgress',
-            'trainingHours',
-            'trainingHoursLabels'
+            'recentActivitiesList'
         ));
     }
 
@@ -293,35 +231,5 @@ class UserdashboardController extends Controller
     {
         // Placeholder for comparison chart data
         return [];
-    }
-
-    private function generatePerformanceInsight($performanceTrend)
-    {
-        if (empty($performanceTrend)) {
-            return "No performance data available yet.";
-        }
-
-        $latest = end($performanceTrend);
-        $previous = prev($performanceTrend);
-
-        if ($latest > $previous) {
-            return "Performance is trending upward with an average rating of {$latest}.";
-        } elseif ($latest < $previous) {
-            return "Performance has declined slightly to an average rating of {$latest}.";
-        } else {
-            return "Performance remains stable at an average rating of {$latest}.";
-        }
-    }
-
-    private function generateActivityDistributionInsight($activityDistribution)
-    {
-        if (empty($activityDistribution)) {
-            return "No activity data available yet.";
-        }
-
-        $mostCommon = array_keys($activityDistribution)[0];
-        $count = $activityDistribution[$mostCommon];
-
-        return "The most common activity is {$mostCommon} with {$count} sessions recorded.";
     }
 }

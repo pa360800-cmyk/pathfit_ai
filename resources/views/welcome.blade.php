@@ -23,17 +23,11 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: var(--dark);
             overflow-x: hidden;
             line-height: 1.6;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        ::-webkit-scrollbar {
-            display: none;
         }
 
         /* Navigation */
