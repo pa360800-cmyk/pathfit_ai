@@ -18,7 +18,44 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $trainingSchedules = TrainingSchedule::where('user_id', $user->id)->get();
-        return view('user.training-schedule', compact('trainingSchedules'));
+
+        // Create sample data if no training schedules exist
+        if ($trainingSchedules->isEmpty()) {
+            TrainingSchedule::create([
+                'title' => 'Morning Cardio Session',
+                'description' => 'Focus on endurance building with running and cycling',
+                'date' => now()->addDays(1)->toDateString(),
+                'start_time' => '07:00:00',
+                'end_time' => '08:30:00',
+                'coach_id' => $user->coach_id ?? 1, // Default coach if none assigned
+                'user_id' => $user->id,
+            ]);
+
+            TrainingSchedule::create([
+                'title' => 'Strength Training',
+                'description' => 'Upper body strength workout with weights',
+                'date' => now()->addDays(3)->toDateString(),
+                'start_time' => '10:00:00',
+                'end_time' => '11:30:00',
+                'coach_id' => $user->coach_id ?? 1,
+                'user_id' => $user->id,
+            ]);
+
+            TrainingSchedule::create([
+                'title' => 'Skill Development',
+                'description' => 'Technical skills practice and drills',
+                'date' => now()->addDays(5)->toDateString(),
+                'start_time' => '14:00:00',
+                'end_time' => '16:00:00',
+                'coach_id' => $user->coach_id ?? 1,
+                'user_id' => $user->id,
+            ]);
+
+            // Refresh the collection
+            $trainingSchedules = TrainingSchedule::where('user_id', $user->id)->get();
+        }
+
+        return view('user.training-schedule', compact('trainingSchedules', 'user'));
     }
 
     public function assignedCoach()
@@ -170,7 +207,7 @@ class UserController extends Controller
             ->get();
 
         // Upcoming Sessions
-        $upcomingSessions = TrainingSchedule::where('user_id', $user->id)
+        $upcomingSessions = \App\Models\SessionSchedule::where('athlete_id', $user->id)
             ->where('date', '>=', now()->toDateString())
             ->orderBy('date')
             ->limit(3)
@@ -332,20 +369,8 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        // Get sports that this coach specializes in (has active requirements for)
-        $coachSports = SportRequirement::where('coach_id', $user->id)
-            ->where('is_active', true)
-            ->pluck('sport_available_id')
-            ->unique();
-
-        // Get the names of sports that this coach specializes in
-        $sportNames = SportAvailable::whereIn('id', $coachSports)->pluck('name');
-
-        // Get athletes who have selected sports that this coach specializes in
-        $athletes = User::where('role', 'Athlete')
-            ->whereNotNull('primary_sport')
-            ->whereIn('primary_sport', $sportNames)
-            ->paginate(10);
+        // Get all athletes
+        $athletes = User::where('role', 'Athlete')->paginate(10);
 
         return view('coach.athletes.index', compact('athletes'));
     }

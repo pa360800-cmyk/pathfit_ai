@@ -45,7 +45,64 @@ class UsersController extends Controller
     public function adminDashboard()
     {
         $users = User::all();
-        return view('admin.dashboard', compact('users'));
+
+        // Data for charts
+        $totalUsers = User::count();
+        $totalAthletes = User::where('role', 'Athlete')->count();
+        $totalCoaches = User::where('role', 'Coach')->count();
+        $totalAdmins = User::where('role', 'Administrator')->count();
+
+        // Athletes by sport (assuming primary_sport field)
+        $athletesBySport = User::where('role', 'Athlete')
+            ->whereNotNull('primary_sport')
+            ->selectRaw('primary_sport, COUNT(*) as count')
+            ->groupBy('primary_sport')
+            ->get();
+
+        // Coaches by specialization
+        $coachesBySpecialization = User::where('role', 'Coach')
+            ->whereNotNull('specialization')
+            ->selectRaw('specialization, COUNT(*) as count')
+            ->groupBy('specialization')
+            ->get();
+
+        // Activity reports count (assuming ActivityReport model exists)
+        $activityReports = \App\Models\ActivityReport::count();
+
+        // Recent activity reports (last 7 days)
+        $recentActivities = \App\Models\ActivityReport::where('created_at', '>=', now()->subDays(7))->count();
+
+        // Athletes details
+        $athletes = User::where('role', 'Athlete')->get();
+        $athleteAges = $athletes->map(function ($athlete) {
+            return $athlete->age ?? (now()->diffInYears($athlete->date_of_birth));
+        })->filter()->values();
+        $athleteGenders = $athletes->whereNotNull('gender')->groupBy('gender')->map->count();
+        $athleteLevels = $athletes->whereNotNull('level')->groupBy('level')->map->count();
+
+        // Coaches details
+        $coaches = User::where('role', 'Coach')->get();
+        $coachExperiences = $coaches->whereNotNull('experience')->groupBy('experience')->map->count();
+        $coachAthleteCounts = $coaches->map(function ($coach) {
+            return User::where('role', 'Athlete')->where('coach_id', $coach->id)->count();
+        });
+
+        return view('admin.dashboard', compact(
+            'users',
+            'totalUsers',
+            'totalAthletes',
+            'totalCoaches',
+            'totalAdmins',
+            'athletesBySport',
+            'coachesBySpecialization',
+            'activityReports',
+            'recentActivities',
+            'athleteAges',
+            'athleteGenders',
+            'athleteLevels',
+            'coachExperiences',
+            'coachAthleteCounts'
+        ));
     }
 
     public function userRead()

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 class ProfileController extends Controller
@@ -58,8 +59,8 @@ class ProfileController extends Controller
         // Handle photo upload
         if ($request->hasFile('photo')) {
             // Delete old photo if exists
-            if ($user->photo && \Storage::disk('public')->exists($user->photo)) {
-                \Storage::disk('public')->delete($user->photo);
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
             }
 
             // Store new photo
@@ -104,6 +105,50 @@ class ProfileController extends Controller
 
         $route = $user->role === 'Athlete' ? 'athlete.profile.index' : ($user->role === 'Coach' ? 'coach.profile.index' : 'profile.edit');
         return Redirect::route($route)->with('status', 'profile-updated');
+    }
+
+    /**
+     * Display the account settings form.
+     */
+    public function accountSettings(Request $request): View
+    {
+        if ($request->user()->role === 'Athlete') {
+            return view('athlete.account-settings.index', [
+                'user' => $request->user(),
+            ]);
+        } elseif ($request->user()->role === 'Coach') {
+            return view('coach.account-settings.index', [
+                'user' => $request->user(),
+            ]);
+        }
+        return view('admin.account-settings.index', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
+     * Update the account settings.
+     */
+    public function updateAccountSettings(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['nullable', 'min:8', 'confirmed'],
+            'email' => ['required', 'email', 'unique:users,email,' . $user->id],
+        ]);
+
+        $user->email = $request->email;
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save();
+
+        $route = $user->role === 'Athlete' ? 'athlete.account-settings.index' : ($user->role === 'Coach' ? 'coach.account-settings.index' : 'admin.account-settings.index');
+        return Redirect::route($route)->with('status', 'account-settings-updated');
     }
 
     /**

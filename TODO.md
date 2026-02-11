@@ -1,17 +1,16 @@
-## Steps to Complete:
+# TODO: Add Events to All Sidebars
 
--   [x] Add `athleteIndex` method to SessionScheduleController to fetch session schedules for the authenticated athlete
--   [x] Add the route `athlete.session-schedules.index` in routes/web.php under the athlete prefix
--   [x] Create a view file `resources/views/athlete/session-schedules/index.blade.php` for athletes to display their session schedules
+## Step 1: Update Admin Sidebar (resources/views/menu/sidebar.blade.php)
 
-# All tasks completed successfully. The route [athlete.session-schedules.index] should now be defined and functional.
+- [x] Add $eventsActive variable in @php block.
+- [x] Add Events menu item after "Coach Assign To The Sports".
 
-# TODO: Fix Route [athlete.session-schedules.index] not defined
+## Step 2: Update Coach Sidebar (resources/views/menu/sidebarcoach.blade.php)
 
-## Steps to Complete:
+- Add $eventsActive variable in @php block.
+- Add Events menu item after "Sport Requirements".
 
--   [x] Add `athleteIndex` method to SessionScheduleController to fetch session schedules for the authenticated athlete
--   [x] Add the route `athlete.session-schedules.index` in routes/web.php under the athlete prefix
--   [x] Create a view file `resources/views/athlete/session-schedules/index.blade.php` for athletes to display their session schedules
+## Step 3: Update Athlete Sidebar (resources/views/menu/sidebarathlete.blade.php)
 
-All tasks completed successfully. The route [athlete.session-schedules.index] should now be defined and functional.
+- Add $eventsActive variable in @php block.
+- Add Events menu item under "Training" section after "Sport Suggestion".

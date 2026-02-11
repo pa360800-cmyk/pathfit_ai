@@ -6,13 +6,15 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegistrationNotification;
 
 class RegisterController extends Controller
 {
     public function registerread(Request $request)
     {
         // Handle GET request - show registration form
-        return view('register');
+        return view('auth.register');
     }
 
     public function register(Request $request)
@@ -29,6 +31,14 @@ class RegisterController extends Controller
         ]);
 
         if ($validator->fails()) {
+            // Send denial email
+            $fullName = trim($request->fname . ' ' . ($request->mname ? $request->mname . ' ' : '') . $request->lname);
+            $tempUser = (object) [
+                'name' => $fullName,
+                'email' => $request->email,
+            ];
+            Mail::to($request->email)->send(new RegistrationNotification($tempUser, 'denied', 'Validation errors: ' . implode(', ', $validator->errors()->all())));
+
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
@@ -50,9 +60,20 @@ class RegisterController extends Controller
                 'role' => 'Athlete', // Default role
             ]);
 
+            // Send success email
+            Mail::to($user->email)->send(new RegistrationNotification($user, 'success'));
+
             // Return to register form with success message
             return redirect()->route('register')->with('success', 'Registration successful! Please login to continue.');
         } catch (\Exception $e) {
+            // Send denial email on exception
+            $fullName = trim($request->fname . ' ' . ($request->mname ? $request->mname . ' ' : '') . $request->lname);
+            $tempUser = (object) [
+                'name' => $fullName,
+                'email' => $request->email,
+            ];
+            Mail::to($request->email)->send(new RegistrationNotification($tempUser, 'denied', 'An error occurred during registration: ' . $e->getMessage()));
+
             return redirect()->back()
                 ->withInput()
                 ->with('failed', 'Registration failed. Please try again.');

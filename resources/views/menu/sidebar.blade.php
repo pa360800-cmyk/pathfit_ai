@@ -10,6 +10,7 @@
     $sportActivityActive = in_array($curr_route, ['admin.sport_activity']) ? 'active' : '';
     $sportAvailableActive = in_array($curr_route, ['admin.sport_available']) ? 'active' : '';
     $assignCoachActive = in_array($curr_route, ['admin.assigncoach']) ? 'active' : '';
+    $eventsActive = in_array($curr_route, ['admin.events.index', 'admin.events.create', 'admin.events.edit', 'admin.events.show']) ? 'active' : '';
 @endphp
 
 
@@ -131,6 +132,14 @@
                 <p>Coach Assign To The Sports</p>
             </a>
         </li>
+
+        <li class="nav-item">
+            <a href="{{ route('admin.events.index') }}" class="nav-link {{ $eventsActive }}">
+                <i class="nav-icon fas fa-calendar-alt"></i>
+                <p>Events</p>
+            </a>
+        </li>
+
         <li class="nav-item">
             <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                 @csrf

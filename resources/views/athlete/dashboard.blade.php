@@ -9,7 +9,7 @@
     <style>
         .dashboard-container {
             padding: 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             min-height: 100vh;
             max-width: 1200px;
             margin: 0 auto;
@@ -35,7 +35,7 @@
         }
 
         .welcome-message {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 12px;
@@ -61,7 +61,7 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             color: white;
             padding: 1rem;
             border-radius: 10px;
@@ -250,7 +250,7 @@
         }
 
         .coach-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 12px;
@@ -307,7 +307,7 @@
         }
 
         .achievement-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #5fdfd8 0%, #0d8686 100%);
             color: white;
             padding: 1rem;
             border-radius: 10px;
@@ -405,22 +405,7 @@
 
         <!-- Upcoming Sessions & Coach Info -->
         <div class="chart-row">
-            <div class="info-section">
-                <h3>📅 Upcoming Sessions</h3>
-                <div class="activity-list">
-                    @forelse($upcomingSessions as $session)
-                    <div class="activity-item">
-                        <div class="activity-icon">📅</div>
-                        <div class="activity-content">
-                            <div class="activity-title">{{ $session->title ?? 'Training Session' }}</div>
-                            <div class="activity-meta">{{ $session->date }} • {{ $session->time ?? 'TBD' }}</div>
-                        </div>
-                    </div>
-                    @empty
-                    <p style="color: #666; text-align: center; padding: 1rem;">No upcoming sessions scheduled.</p>
-                    @endforelse
-                </div>
-            </div>
+ 
 
             <div class="info-section">
                 <h3>👨‍🏫 Your Coach</h3>

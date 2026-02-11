@@ -13,6 +13,7 @@ class TrainingSchedule extends Model
         'start_time',
         'end_time',
         'coach_id',
+        'user_id',
     ];
 
     protected $casts = [

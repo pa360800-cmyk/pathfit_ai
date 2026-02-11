@@ -37,10 +37,11 @@ class UserdashboardController extends Controller
             ->get();
 
         // Upcoming Sessions
-        $upcomingSessions = \App\Models\TrainingSchedule::where('user_id', $user->id)
+        $upcomingSessions = \App\Models\SessionSchedule::where('athlete_id', $user->id)
             ->where('date', '>=', now()->toDateString())
             ->orderBy('date')
             ->limit(3)
+            ->with('coach')
             ->get();
 
         // Injury Status
