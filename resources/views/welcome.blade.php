@@ -947,7 +947,7 @@
             <div class="hero-visual">
                 <div class="athlete-image-container">
                     <div class="image-wrapper">
-                        <img src="{{ asset('templates/dist/img/athlete.jpg') }}" alt="Athletic Training">
+                        <img src="{{ asset('images/1757094751.png') }}" alt="Athletic Training" onerror="this.style.display='none'">
                         <div class="image-overlay"></div>
                     </div>
 
