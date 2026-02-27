@@ -9,7 +9,8 @@ use App\Models\ActivityReport;
 use App\Models\SportAvailable;
 use App\Models\SportRequirement;
 use Illuminate\Support\Facades\Auth;
-use OpenAI\Client;
+use Illuminate\Support\Facades\Log;
+use OpenAI;
 
 class UserController extends Controller
 {
@@ -369,8 +370,10 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        // Get all athletes
-        $athletes = User::where('role', 'Athlete')->paginate(10);
+        // Get athletes filtered by coach's primary sport
+        $athletes = User::where('role', 'Athlete')
+            ->where('primary_sport', $user->primary_sport)
+            ->paginate(10);
 
         return view('coach.athletes.index', compact('athletes'));
     }
@@ -1024,7 +1027,7 @@ class UserController extends Controller
         }
 
         try {
-            $client = Client::factory()->withApiKey($apiKey)->make();
+            $client = OpenAI::client($apiKey);
 
             // Prepare user profile data for the prompt
             $profileData = [
@@ -1114,7 +1117,7 @@ class UserController extends Controller
 
         } catch (\Exception $e) {
             // Log the error and fall back to rule-based logic
-            \Log::error('OpenAI API error: ' . $e->getMessage());
+            Log::error('OpenAI API error: ' . $e->getMessage());
             return [];
         }
     }
